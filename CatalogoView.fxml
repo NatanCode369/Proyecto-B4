@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.franciscoalvarez.system.controller.CatalogoController">
+    <children>
+        <VBox layoutX="20.0" layoutY="20.0" prefHeight="660.0" prefWidth="960.0" spacing="20.0">
+            <children>
+                <!-- Título -->
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <children>
+                        <Label text="📚 Catálogo Bibliográfico Digital" textFill="#2c3e50">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label text="Biblioteca Central" textFill="#7f8c8d">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+
+                <!-- Formulario de ingreso -->
+                <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                    <children>
+                        <Label text="Registrar Nuevo Libro" textFill="#34495e">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Label>
+
+                        <HBox spacing="20.0">
+                            <children>
+                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label minWidth="70.0" text="ISBN:" textFill="#34495e" />
+                                                <TextField fx:id="txtISBN" promptText="Ingrese el ISBN" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label minWidth="70.0" text="Título:" textFill="#34495e" />
+                                                <TextField fx:id="txtTitulo" promptText="Ingrese el título" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label minWidth="70.0" text="Autor:" textFill="#34495e" />
+                                                <TextField fx:id="txtAutor" promptText="Ingrese el autor principal" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label minWidth="70.0" text="Editorial:" textFill="#34495e" />
+                                                <TextField fx:id="txtEditorial" promptText="Ingrese la editorial" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label minWidth="70.0" text="Año:" textFill="#34495e" />
+                                                <TextField fx:id="txtAnio" promptText="2024" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10.0">
+                                            <children>
+                                                <Label minWidth="70.0" text="Copias:" textFill="#34495e" />
+                                                <TextField fx:id="txtCopias" promptText="Número de copias" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                            <children>
+                                <Button fx:id="btnLimpiar" onAction="#handleLimpiar" style="-fx-background-color: #95a5a6; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="Limpiar Campos" />
+                                <Button fx:id="btnAgregar" onAction="#handleAgregarLibro" style="-fx-background-color: #27ae60; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="Agregar Libro" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Tabla de libros -->
+                <VBox spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="20.0">
+                            <children>
+                                <Label text="Libros Registrados" textFill="#34495e">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblTotalLibros" text="Total: 0" textFill="#7f8c8d">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <TableView fx:id="tablaLibros" prefHeight="300.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colISBN" prefWidth="150.0" text="ISBN" />
+                                <TableColumn fx:id="colTitulo" prefWidth="200.0" text="Título" />
+                                <TableColumn fx:id="colAutor" prefWidth="150.0" text="Autor" />
+                                <TableColumn fx:id="colEditorial" prefWidth="150.0" text="Editorial" />
+                                <TableColumn fx:id="colAnio" prefWidth="80.0" text="Año" />
+                                <TableColumn fx:id="colCopias" prefWidth="100.0" text="Copias" />
+                            </columns>
+                        </TableView>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                            <children>
+                                <Button fx:id="btnNuevoPrestamo" onAction="#handleNuevoPrestamo" style="-fx-background-color: #3498db; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="📖 Nuevo Préstamo" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
