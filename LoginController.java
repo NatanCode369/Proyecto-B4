@@ -1,4 +1,4 @@
-package com.franciscoalvarez.system.controller;
+package org.catalogodigital.system.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

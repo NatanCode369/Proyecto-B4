@@ -5,59 +5,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.franciscoalvarez.system.controller.LoginController">
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.franciscoalvarez.system.controller.LoginController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
     <children>
-        <VBox alignment="CENTER" layoutX="150.0" layoutY="80.0" prefHeight="240.0" prefWidth="300.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
-            <children>
-                <Label text="🔐 Sistema Bibliotecario" textFill="#2c3e50">
-                    <font>
-                        <Font name="System Bold" size="22.0" />
-                    </font>
-                </Label>
-                <Label text="Iniciar Sesión" textFill="#7f8c8d">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
+        <Label text="Login" />
 
-                <VBox spacing="15.0" VBox.vgrow="ALWAYS">
-                    <children>
-                        <VBox spacing="5.0">
-                            <children>
-                                <Label text="Usuario" textFill="#34495e">
-                                    <font>
-                                        <Font size="13.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="txtUsuario" prefHeight="35.0" prefWidth="250.0" promptText="Ingrese su usuario" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" />
-                            </children>
-                        </VBox>
-                        <VBox spacing="5.0">
-                            <children>
-                                <Label text="Contraseña" textFill="#34495e">
-                                    <font>
-                                        <Font size="13.0" />
-                                    </font>
-                                </Label>
-                                <PasswordField fx:id="txtContrasena" prefHeight="35.0" prefWidth="250.0" promptText="Ingrese su contraseña" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" />
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
+        <TextField fx:id="txtUsuario" promptText="Usuario" />
 
-                <Button fx:id="btnIniciarSesion" onAction="#handleLogin" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #3498db; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="Iniciar Sesión">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Button>
-            </children>
-            <padding>
-                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-            </padding>
-        </VBox>
+        <PasswordField fx:id="txtContrasena" promptText="Contraseña" />
+
+        <Button fx:id="btnIniciarSesion" onAction="#handleLogin" text="Iniciar Sesión" />
     </children>
-</AnchorPane>
+</VBox>

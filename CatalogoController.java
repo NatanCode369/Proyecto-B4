@@ -1,4 +1,4 @@
-package com.franciscoalvarez.system.controller;
+package org.catalogodigital.system.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -52,14 +52,14 @@ public class CatalogoController {
 
     @FXML
     public void initialize() {
-        System.out.println("📚 Catálogo iniciado correctamente");
+        System.out.println(" Catálogo iniciado correctamente");
         // Configurar columnas de la tabla
         // Cargar datos de prueba
     }
 
     @FXML
     private void handleAgregarLibro() {
-        System.out.println("✅ Agregando libro: " + txtTitulo.getText());
+        System.out.println("   Agregando libro: " + txtTitulo.getText());
         System.out.println("   ISBN: " + txtISBN.getText());
         System.out.println("   Autor: " + txtAutor.getText());
         System.out.println("   Editorial: " + txtEditorial.getText());
@@ -73,12 +73,12 @@ public class CatalogoController {
     @FXML
     private void handleLimpiar() {
         limpiarCampos();
-        System.out.println("🧹 Campos limpiados");
+        System.out.println("Campos limpiados");
     }
 
     @FXML
     private void handleNuevoPrestamo() {
-        System.out.println("📖 Abriendo ventana de préstamo");
+        System.out.println("Abriendo ventana de préstamo");
         // Aquí irá la lógica para abrir PrestamoView después
     }
 

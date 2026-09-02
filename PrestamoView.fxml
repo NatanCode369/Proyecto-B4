@@ -3,159 +3,44 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.franciscoalvarez.system.controller.PrestamoController">
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.franciscoalvarez.system.controller.PrestamoController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
     <children>
-        <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="20.0">
+        <Label text="Registrar Préstamo" />
+
+        <Label text="Datos del Estudiante" />
+        <HBox spacing="10.0">
             <children>
-                <!-- Título -->
-                <HBox alignment="CENTER_LEFT" spacing="20.0">
-                    <children>
-                        <Label text="📖 Registrar Préstamo" textFill="#2c3e50">
-                            <font>
-                                <Font name="System Bold" size="24.0" />
-                            </font>
-                        </Label>
-                        <Label text="Comprobante de Préstamo" textFill="#7f8c8d">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
-                    </children>
-                </HBox>
-
-                <!-- Datos del Estudiante -->
-                <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
-                    <children>
-                        <Label text="👤 Datos del Estudiante" textFill="#34495e">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-
-                        <HBox spacing="20.0">
-                            <children>
-                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
-                                    <children>
-                                        <HBox spacing="10.0">
-                                            <children>
-                                                <Label minWidth="70.0" text="Carnet:" textFill="#34495e" />
-                                                <TextField fx:id="txtCarnet" promptText="Ingrese el carnet" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
-                                        <HBox spacing="10.0">
-                                            <children>
-                                                <Label minWidth="70.0" text="Nombre:" textFill="#34495e" />
-                                                <Label fx:id="lblNombre" style="-fx-background-color: #f8f9fa; -fx-background-radius: 5; -fx-padding: 8;" text="-" textFill="#2c3e50" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                                <VBox alignment="BOTTOM_RIGHT" spacing="10.0">
-                                    <children>
-                                        <Button fx:id="btnBuscarEstudiante" onAction="#handleBuscarEstudiante" style="-fx-background-color: #3498db; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="🔍 Buscar" />
-                                    </children>
-                                </VBox>
-                            </children>
-                        </HBox>
-                    </children>
-                </VBox>
-
-                <!-- Datos del Libro -->
-                <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
-                    <children>
-                        <Label text="📚 Datos del Libro" textFill="#34495e">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-
-                        <HBox spacing="20.0">
-                            <children>
-                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
-                                    <children>
-                                        <HBox spacing="10.0">
-                                            <children>
-                                                <Label minWidth="70.0" text="ISBN:" textFill="#34495e" />
-                                                <TextField fx:id="txtISBN" promptText="Ingrese el ISBN" style="-fx-background-radius: 5; -fx-border-color: #bdc3c7; -fx-border-radius: 5;" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
-                                        <HBox spacing="10.0">
-                                            <children>
-                                                <Label minWidth="70.0" text="Título:" textFill="#34495e" />
-                                                <Label fx:id="lblTitulo" style="-fx-background-color: #f8f9fa; -fx-background-radius: 5; -fx-padding: 8;" text="-" textFill="#2c3e50" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                                <VBox alignment="BOTTOM_RIGHT" spacing="10.0">
-                                    <children>
-                                        <Button fx:id="btnBuscarLibro" onAction="#handleBuscarLibro" style="-fx-background-color: #3498db; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="🔍 Buscar" />
-                                    </children>
-                                </VBox>
-                            </children>
-                        </HBox>
-                    </children>
-                </VBox>
-
-                <!-- Fechas -->
-                <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
-                    <children>
-                        <Label text="📅 Fechas del Préstamo" textFill="#34495e">
-                            <font>
-                                <Font name="System Bold" size="16.0" />
-                            </font>
-                        </Label>
-
-                        <HBox spacing="40.0">
-                            <children>
-                                <VBox spacing="5.0">
-                                    <children>
-                                        <Label text="Fecha de Préstamo:" textFill="#34495e">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblFechaPrestamo" style="-fx-background-color: #f8f9fa; -fx-background-radius: 5; -fx-padding: 10;" text="-" textFill="#2c3e50" />
-                                    </children>
-                                </VBox>
-                                <VBox spacing="5.0">
-                                    <children>
-                                        <Label text="Fecha Límite:" textFill="#34495e">
-                                            <font>
-                                                <Font size="13.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="lblFechaLimite" style="-fx-background-color: #f8f9fa; -fx-background-radius: 5; -fx-padding: 10; -fx-border-color: #e74c3c; -fx-border-radius: 5; -fx-border-width: 2;" text="-" textFill="#e74c3c" />
-                                    </children>
-                                </VBox>
-                            </children>
-                        </HBox>
-                    </children>
-                </VBox>
-
-                <!-- Botones de acción -->
-                <HBox alignment="CENTER_RIGHT" spacing="15.0">
-                    <children>
-                        <Button fx:id="btnImprimir" onAction="#handleImprimir" style="-fx-background-color: #e67e22; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="🖨️ Imprimir Comprobante">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Button>
-                        <Button fx:id="btnGenerarPrestamo" onAction="#handleGenerarPrestamo" style="-fx-background-color: #27ae60; -fx-background-radius: 5; -fx-text-fill: white; -fx-font-weight: bold;" text="✅ Generar Préstamo">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Button>
-                    </children>
-                </HBox>
+                <TextField fx:id="txtCarnet" promptText="Carnet" />
+                <Button fx:id="btnBuscarEstudiante" onAction="#handleBuscarEstudiante" text="Buscar" />
             </children>
-        </VBox>
+        </HBox>
+        <Label fx:id="lblNombre" text="Nombre: -" />
+
+        <Label text="Datos del Libro" />
+        <HBox spacing="10.0">
+            <children>
+                <TextField fx:id="txtISBN" promptText="ISBN" />
+                <Button fx:id="btnBuscarLibro" onAction="#handleBuscarLibro" text="Buscar" />
+            </children>
+        </HBox>
+        <Label fx:id="lblTitulo" text="Título: -" />
+
+        <Label text="Fechas" />
+        <Label fx:id="lblFechaPrestamo" text="Fecha Préstamo: -" />
+        <Label fx:id="lblFechaLimite" text="Fecha Límite: -" />
+
+        <HBox spacing="10.0">
+            <children>
+                <Button fx:id="btnGenerarPrestamo" onAction="#handleGenerarPrestamo" text="Generar Préstamo" />
+                <Button fx:id="btnImprimir" onAction="#handleImprimir" text="Imprimir Comprobante" />
+            </children>
+        </HBox>
     </children>
-</AnchorPane>
+</VBox>
