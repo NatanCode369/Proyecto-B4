@@ -1,4 +1,4 @@
-package org.catalogodigital.system;
+package org.biblioteca.system;
 
 public class Launcher {
     public static void main(String[] args) {
