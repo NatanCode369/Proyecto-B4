@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="600.0" prefWidth="1000.0" spacing="10.0" styleClass="root" stylesheets="@/org/library/system/resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogoController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <children>
+        <Label styleClass="titulo-principal" text="Catalogo de Libros" />
+        <HBox spacing="10.0">
+            <children>
+                <TextField fx:id="txtISBN" promptText="ISBN" prefWidth="150" styleClass="campo-texto" />
+                <TextField fx:id="txtTitulo" promptText="Titulo" prefWidth="200" styleClass="campo-texto" />
+                <TextField fx:id="txtAutor" promptText="Autor" prefWidth="150" styleClass="campo-texto" />
+            </children>
+        </HBox>
+        <HBox spacing="10.0">
+            <children>
+                <TextField fx:id="txtEditorial" promptText="Editorial" prefWidth="150" styleClass="campo-texto" />
+                <TextField fx:id="txtAnio" promptText="Anio" prefWidth="100" styleClass="campo-texto" />
+                <TextField fx:id="txtCopias" promptText="Copias" prefWidth="100" styleClass="campo-texto" />
+            </children>
+        </HBox>
+        <HBox spacing="10.0">
+            <children>
+                <Button fx:id="btnAgregar" onAction="#handleAgregarLibro" styleClass="btn-primary" text="Agregar" />
+                <Button fx:id="btnLimpiar" onAction="#handleLimpiar" styleClass="btn-secondary" text="Limpiar" />
+                <Button fx:id="btnNuevoPrestamo" onAction="#handleNuevoPrestamo" styleClass="btn-primary" text="Nuevo Prestamo" />
+            </children>
+        </HBox>
+        <TableView fx:id="tablaLibros" prefHeight="300.0">
+            <columns>
+                <TableColumn fx:id="colISBN" text="ISBN" prefWidth="150" />
+                <TableColumn fx:id="colTitulo" text="Titulo" prefWidth="200" />
+                <TableColumn fx:id="colAutor" text="Autor" prefWidth="150" />
+                <TableColumn fx:id="colEditorial" text="Editorial" prefWidth="150" />
+                <TableColumn fx:id="colAnio" text="Anio" prefWidth="80" />
+                <TableColumn fx:id="colCopias" text="Copias" prefWidth="80" />
+            </columns>
+        </TableView>
+        <Button fx:id="btnRegresar" onAction="#handleRegresar" styleClass="btn-secondary" text="Regresar" />
+    </children>
+</VBox>
