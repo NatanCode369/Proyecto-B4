@@ -1,4 +1,4 @@
-package org.catalogodigital.system;
+package org.library.system;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
