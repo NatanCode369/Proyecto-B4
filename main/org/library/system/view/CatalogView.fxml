@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogController">
+<VBox prefHeight="600.0" prefWidth="1000.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -17,33 +17,33 @@
         <Label styleClass="label-title" text="Catalogo de Libros" />
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtIsbn" promptText="ISBN" prefWidth="150" styleClass="text-field" />
-                <TextField fx:id="txtTitle" promptText="Titulo" prefWidth="200" styleClass="text-field" />
-                <TextField fx:id="txtAuthor" promptText="Autor" prefWidth="150" styleClass="text-field" />
+                <TextField fx:id="txtIsbn" prefWidth="150" promptText="ISBN" styleClass="text-field" />
+                <TextField fx:id="txtTitle" prefWidth="200" promptText="Titulo" styleClass="text-field" />
+                <TextField fx:id="txtAuthor" prefWidth="150" promptText="Autor" styleClass="text-field" />
             </children>
         </HBox>
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtPublisher" promptText="Editorial" prefWidth="150" styleClass="text-field" />
-                <TextField fx:id="txtYear" promptText="Anio" prefWidth="100" styleClass="text-field" />
-                <TextField fx:id="txtCopies" promptText="Copias" prefWidth="100" styleClass="text-field" />
+                <TextField fx:id="txtPublisher" prefWidth="150" promptText="Editorial" styleClass="text-field" />
+                <TextField fx:id="txtYear" prefWidth="100" promptText="Anio" styleClass="text-field" />
+                <TextField fx:id="txtCopies" prefWidth="100" promptText="Copias" styleClass="text-field" />
             </children>
         </HBox>
         <HBox spacing="10.0">
             <children>
                 <Button fx:id="btnAdd" onAction="#handleAddBook" text="Agregar" />
                 <Button fx:id="btnClear" onAction="#handleClearFields" styleClass="button-danger" text="Limpiar" />
-                <Button fx:id="btnNewBorrowing" onAction="#handleNewBorrowing" text="Nuevo Prestamo" />
+                <Button fx:id="btnNewBorrowing" onAction="#handleNewBorrowing" prefHeight="36.0" prefWidth="178.0" text="Nuevo Prestamo" />
             </children>
         </HBox>
         <TableView fx:id="tableBooks" prefHeight="300.0">
             <columns>
-                <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150" />
-                <TableColumn fx:id="colTitle" text="Titulo" prefWidth="200" />
-                <TableColumn fx:id="colAuthor" text="Autor" prefWidth="150" />
-                <TableColumn fx:id="colPublisher" text="Editorial" prefWidth="150" />
-                <TableColumn fx:id="colYear" text="Anio" prefWidth="80" />
-                <TableColumn fx:id="colCopies" text="Copias" prefWidth="80" />
+                <TableColumn fx:id="colIsbn" prefWidth="150" text="ISBN" />
+                <TableColumn fx:id="colTitle" prefWidth="200" text="Titulo" />
+                <TableColumn fx:id="colAuthor" prefWidth="150" text="Autor" />
+                <TableColumn fx:id="colPublisher" prefWidth="150" text="Editorial" />
+                <TableColumn fx:id="colYear" prefWidth="80" text="Anio" />
+                <TableColumn fx:id="colCopies" prefWidth="80" text="Copias" />
             </columns>
         </TableView>
         <Button fx:id="btnBack" onAction="#handleBack" styleClass="button-back" text="Regresar" />
