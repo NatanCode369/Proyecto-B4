@@ -1,7 +1,7 @@
-package org.library.core.model;
+package org.library.system.model;
 
 import java.time.LocalDate;
-import org.library.core.enums.RequestStatus;
+import org.library.system.enums.RequestStatus;
 
 public class LoanApplication {
     private Integer request_id;

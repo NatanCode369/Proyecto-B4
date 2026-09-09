@@ -1,9 +1,9 @@
-package org.library.core.model;
+package org.library.system.model;
 
 
 
 import java.time.LocalDate;
-import org.library.core.enums.LoanStatus;
+import org.library.system.enums.LoanStatus;
 
 public class Loan {
     private Integer loan_id;

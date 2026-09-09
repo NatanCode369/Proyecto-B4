@@ -1,4 +1,4 @@
-package org.library.core.model;
+package org.library.system.model;
 
 public class LoanDetails {
     private Integer loan_detail_id;

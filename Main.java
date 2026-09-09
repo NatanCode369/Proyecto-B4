@@ -1,14 +1,14 @@
-package org.library.core;
+package org.library.system;
 
-import org.library.core.model.RequestDetails;
-import org.library.core.model.LoanApplication;
-import org.library.core.model.Book;
-import org.library.core.model.LoanDetails;
-import org.library.core.model.User;
-import org.library.core.model.Loan;
-import org.library.core.enums.LoanStatus;
-import org.library.core.enums.RequestStatus;
-import org.library.core.enums.Role;
+import org.library.system.model.RequestDetails;
+import org.library.system.model.LoanApplication;
+import org.library.system.model.Book;
+import org.library.system.model.LoanDetails;
+import org.library.system.model.User;
+import org.library.system.model.Loan;
+import org.library.system.enums.LoanStatus;
+import org.library.system.enums.RequestStatus;
+import org.library.system.enums.Role;
 import org.library.utils.SessionManager; // Importamos el manejador de sesiones
 
 import java.time.LocalDate;

@@ -1,6 +1,6 @@
-package org.library.core.model;
+package org.library.system.model;
 
-import org.library.core.enums.Role;
+import org.library.system.enums.Role;
 
 public class User {
     private Integer user_id;
