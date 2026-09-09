@@ -9,62 +9,58 @@ import javafx.stage.Stage;
 public class RegisterController {
 
     @FXML
-    private TextField txtNombre;
+    private TextField txtName;
 
     @FXML
-    private TextField txtCorreo;
+    private TextField txtEmail;
 
     @FXML
-    private PasswordField txtContrasena;
+    private PasswordField txtPassword;
 
     @FXML
-    private PasswordField txtConfirmarContrasena;
+    private PasswordField txtConfirmPassword;
 
     @FXML
-    private Button btnRegistrar;
+    private Button btnRegister;
 
     @FXML
-    private Button btnCancelar;
+    private Button btnCancel;
 
     @FXML
     public void initialize() {
-        // Inicializacion del controlador
+        // Inicialización
     }
 
     @FXML
-    private void handleRegistrar() {
-        String nombre = txtNombre.getText();
-        String correo = txtCorreo.getText();
-        String contrasena = txtContrasena.getText();
-        String confirmar = txtConfirmarContrasena.getText();
+    private void handleRegister() {
+        String name = txtName.getText();
+        String email = txtEmail.getText();
+        String password = txtPassword.getText();
+        String confirm = txtConfirmPassword.getText();
 
-        System.out.println("Registro de bibliotecario jefe:");
-        System.out.println("Nombre: " + nombre);
-        System.out.println("Correo: " + correo);
+        System.out.println("Register: " + name + " - " + email);
 
-        if (!contrasena.equals(confirmar)) {
-            System.out.println("Las contrasenas no coinciden");
+        if (!password.equals(confirm)) {
+            System.out.println("Las contraseñas no coinciden");
             return;
         }
 
-        // Aqui se integrara el guardado real en la base de datos
-        Stage stageActual = (Stage) btnRegistrar.getScene().getWindow();
-        SceneManagerController.cerrarYAbrir(
-                stageActual,
+        // Aquí se guardaría en la base de datos
+        Stage currentStage = (Stage) btnRegister.getScene().getWindow();
+        SceneManagerController.closeAndOpen(
+                currentStage,
                 "/org/library/system/view/LoginView.fxml",
-                "Iniciar Sesion",
-                600, 400
+                "Iniciar Sesion"
         );
     }
 
     @FXML
-    private void handleCancelar() {
-        Stage stageActual = (Stage) btnCancelar.getScene().getWindow();
-        SceneManagerController.cerrarYAbrir(
-                stageActual,
+    private void handleCancel() {
+        Stage currentStage = (Stage) btnCancel.getScene().getWindow();
+        SceneManagerController.closeAndOpen(
+                currentStage,
                 "/org/library/system/view/LoginView.fxml",
-                "Iniciar Sesion",
-                600, 400
+                "Iniciar Sesion"
         );
     }
 }

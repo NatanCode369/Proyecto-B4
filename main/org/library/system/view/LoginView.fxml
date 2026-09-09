@@ -10,20 +10,20 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="415.0" prefWidth="336.0" spacing="15.0" styleClass="root" stylesheets="@/org/library/system/resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.LoginController">
+<VBox alignment="TOP_CENTER" prefHeight="415.0" prefWidth="336.0" spacing="15.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.LoginController">
     <padding>
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
     <children>
-      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../resources/images/AvatarConStyleFrutigerAeroVBlue.png" />
-         </image>
-      </ImageView>
+        <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../resources/images/AvatarConStyleFrutigerAeroVBlue.png" />
+            </image>
+        </ImageView>
         <Label styleClass="titulo-principal" text="Iniciar Sesion" />
-        <TextField fx:id="txtCorreo" promptText="Correo electronico" styleClass="campo-texto" />
-        <PasswordField fx:id="txtContrasena" promptText="Contrasena" styleClass="campo-texto" />
-        <Button fx:id="btnIniciarSesion" onAction="#handleLogin" styleClass="btn-primary" text="Iniciar Sesion" />
-        <Hyperlink fx:id="hlRegistro" onAction="#handleIrARegistro" styleClass="enlace" text="¿No has registrado tu correo?" />
+        <TextField fx:id="txtEmail" promptText="Correo electronico" styleClass="campo-texto" />
+        <PasswordField fx:id="txtPassword" promptText="Contrasena" styleClass="campo-texto" />
+        <Button fx:id="btnLogin" onAction="#handleLogin" styleClass="btn-primary" text="Iniciar Sesion" />
+        <Hyperlink fx:id="hlRegister" onAction="#handleGoToRegister" styleClass="enlace" text="¿No has registrado tu correo?" />
     </children>
 </VBox>

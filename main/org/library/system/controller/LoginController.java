@@ -10,55 +10,55 @@ import javafx.stage.Stage;
 public class LoginController {
 
     @FXML
-    private TextField txtCorreo;
+    private TextField txtEmail;
 
     @FXML
-    private PasswordField txtContrasena;
+    private PasswordField txtPassword;
 
     @FXML
-    private Button btnIniciarSesion;
+    private Button btnLogin;
 
     @FXML
-    private Hyperlink hlRegistro;
+    private Hyperlink hlRegister;
 
     @FXML
     public void initialize() {
-        // Inicializacion del controlador
-        System.out.println("LoginController inicializado");
+        System.out.println("LoginController initialized");
     }
 
     @FXML
     private void handleLogin() {
-        String correo = txtCorreo.getText();
-        String contrasena = txtContrasena.getText();
+        String email = txtEmail.getText();
+        String password = txtPassword.getText();
+        System.out.println("Login attempt with email: " + email);
 
-        System.out.println("Intento de login con correo: " + correo);
+        // Simulación: asignar rol según el correo (para pruebas)
+        String role;
+        if (email.equalsIgnoreCase("estudiante@mail.com")) {
+            role = "Estudiante";
+        } else if (email.equalsIgnoreCase("bibliotecario@mail.com")) {
+            role = "Bibliotecario";
+        } else {
+            role = "Bibliotecario Jefe";
+        }
 
-        // Por ahora, el sistema asigna un rol fijo (Bibliotecario Jefe)
-        // En el futuro, este rol se obtendra de la base de datos
-        String rol = "Bibliotecario Jefe";
+        DashboardController.setRole(role);
 
-        // Establecer el rol en el DashboardController
-        DashboardController.setRol(rol);
-
-        // Cerrar ventana actual y abrir Dashboard
-        Stage stageActual = (Stage) btnIniciarSesion.getScene().getWindow();
-        SceneManagerController.cerrarYAbrir(
-                stageActual,
+        Stage currentStage = (Stage) btnLogin.getScene().getWindow();
+        SceneManagerController.closeAndOpen(
+                currentStage,
                 "/org/library/system/view/DashboardView.fxml",
-                "Panel Principal",
-                800, 600
+                "Panel Principal"
         );
     }
 
     @FXML
-    private void handleIrARegistro() {
-        Stage stageActual = (Stage) hlRegistro.getScene().getWindow();
-        SceneManagerController.cerrarYAbrir(
-                stageActual,
+    private void handleGoToRegister() {
+        Stage currentStage = (Stage) hlRegister.getScene().getWindow();
+        SceneManagerController.closeAndOpen(
+                currentStage,
                 "/org/library/system/view/RegisterView.fxml",
-                "Registro de Bibliotecario Jefe",
-                500, 400
+                "Registro de Bibliotecario Jefe"
         );
     }
 }
