@@ -3,6 +3,7 @@ package org.library.system;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,13 +19,21 @@ public class Main extends Application {
                 System.err.println("No se encuentra LoginView.fxml");
                 return;
             }
+
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Scene scene = new Scene(loader.load());
+
+            Image icon = new Image(
+                    getClass().getResourceAsStream("/org/library/system/resources/images/library-Book.png")
+            );
+            stage.getIcons().add(icon);
+
             stage.setTitle("Sistema Bibliotecario");
             stage.setScene(scene);
             stage.sizeToScene();
             stage.setResizable(false);
             stage.show();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

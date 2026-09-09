@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import org.library.system.utils.Validations;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -58,16 +59,19 @@ public class BorrowingController {
     @FXML
     private Button btnBack;
 
+    private final Validations validations;
+
+    public BorrowingController() {
+        this.validations = new Validations();
+    }
+
     @FXML
     public void initialize() {
-        // Establecer fecha actual
         lblBorrowDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        // Configurar columnas de la tabla de ejemplares
         colBarcode.setCellValueFactory(new PropertyValueFactory<>("barcode"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Columna de selección (botón)
         colSelect.setCellFactory(param -> new TableCell<>() {
             private final Button selectBtn = new Button("Seleccionar");
 
@@ -89,55 +93,78 @@ public class BorrowingController {
             }
         });
 
-        // Cargar datos de prueba
         loadTestCopies();
+        System.out.println("BorrowingController initialized");
     }
 
     @FXML
     private void handleSearchStudent() {
         String id = txtStudentId.getText();
-        if (id == null || id.isEmpty()) {
-            System.out.println("Ingrese un carnet");
+
+        if (validations.isEmpty(id)) {
+            System.out.println("Error: Ingrese un carnet");
             return;
         }
+
         System.out.println("Buscando estudiante con carnet: " + id);
         // Simulación
         lblStudentName.setText("Nombre: Juan Perez");
         lblStudentEmail.setText("Correo: juan.perez@universidad.edu");
+        System.out.println("Estudiante encontrado (simulado)");
     }
 
     @FXML
     private void handleSearchBook() {
         String isbn = txtIsbn.getText();
         String title = txtBookTitle.getText();
-        System.out.println("Buscando libro: ISBN=" + isbn + ", Titulo=" + title);
+
+        if (validations.isEmpty(isbn) && validations.isEmpty(title)) {
+            System.out.println("Error: Ingrese ISBN o título para buscar");
+            return;
+        }
+
+        System.out.println("Buscando libro: ISBN=" + isbn + ", Título=" + title);
         loadTestCopies();
+        System.out.println("Libro encontrado (simulado)");
     }
 
     private void selectCopy(Copy copy) {
         System.out.println("Ejemplar seleccionado: " + copy.getBarcode());
-        // Aquí se guardaría el ejemplar seleccionado
     }
 
     @FXML
     private void handleGenerateBorrowing() {
-        System.out.println("Generando préstamo...");
+        System.out.println("=== GENERANDO PRÉSTAMO ===");
+
+        // Validar que se haya seleccionado una fecha
         if (dpDueDate.getValue() == null) {
-            System.out.println("Debe seleccionar una fecha límite");
+            System.out.println("Error: Debe seleccionar una fecha límite");
             return;
         }
+
+        // Validar que se haya buscado un estudiante
         if (lblStudentName.getText().equals("Nombre: -")) {
-            System.out.println("Debe buscar un estudiante");
+            System.out.println("Error: Debe buscar un estudiante");
             return;
         }
-        System.out.println("Préstamo generado correctamente");
-        // Aquí se guardaría en la base de datos
+
+        // Validar que se haya seleccionado un ejemplar
+        if (tableCopies.getSelectionModel().isEmpty()) {
+            System.out.println("Error: Debe seleccionar un ejemplar de la tabla");
+            return;
+        }
+
+        System.out.println("Préstamo generado exitosamente (simulado)");
+        System.out.println("  Estudiante: " + lblStudentName.getText());
+        System.out.println("  Fecha límite: " + dpDueDate.getValue().toString());
+
+        // TODO: Aquí iría el guardado en la base de datos
     }
 
     @FXML
     private void handlePrintReceipt() {
         System.out.println("Imprimiendo comprobante...");
-        // Aquí se generaría el comprobante PDF
+        // TODO: Generar comprobante
     }
 
     @FXML
