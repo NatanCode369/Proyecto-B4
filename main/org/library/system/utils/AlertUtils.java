@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 
 public class AlertUtils {
-    private Alert alert = new Alert(Alert.AlertType.NONE);
+    private final Alert alert = new Alert(Alert.AlertType.NONE);
     private static AlertUtils alertUtils;
 
     public static AlertUtils instanceAlert() {
