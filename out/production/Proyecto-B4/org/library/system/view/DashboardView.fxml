@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="500.0" prefWidth="795.0" spacing="20.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.DashboardController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+    <children>
+        <Label fx:id="lblWelcome" styleClass="label-title" text="Bienvenido" />
+        <Label fx:id="lblRole" text="Rol: " />
+        <HBox spacing="20.0">
+            <children>
+                <Button fx:id="btnCatalog" onAction="#handleOpenCatalog" prefHeight="262.0" prefWidth="265.0" text="Gestion de Catalogo" />
+                <Button fx:id="btnBorrowings" onAction="#handleOpenBorrowings" prefHeight="262.0" prefWidth="171.0" text="Gestion de Prestamos" />
+                <Button fx:id="btnManageLibrarians" onAction="#handleManageLibrarians" prefHeight="263.0" prefWidth="220.0" text="Gestion de Bibliotecarios" />
+                <Button fx:id="btnConsultCatalog" onAction="#handleConsultCatalog" prefHeight="262.0" prefWidth="121.0" styleClass="button-secondary" text="Consultar Catalogo" />
+                <Button fx:id="btnMyBorrowings" onAction="#handleMyBorrowings" prefHeight="262.0" prefWidth="53.0" styleClass="button-secondary" text="Mis Prestamos" />
+            </children>
+        </HBox>
+        <Button fx:id="btnLogout" onAction="#handleLogout" styleClass="button-danger" text="Cerrar Sesion" />
+    </children>
+</VBox>
