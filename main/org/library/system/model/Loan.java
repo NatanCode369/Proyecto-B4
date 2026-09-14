@@ -2,7 +2,7 @@ package org.library.system.model;
 
 
 import java.time.LocalDate;
-import org.library.system.enums.LoanStatus;
+import org.library.system.model.enums.LoanStatus;
 
 public class Loan {
     private Integer loan_id;

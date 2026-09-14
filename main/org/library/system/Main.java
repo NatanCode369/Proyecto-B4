@@ -6,9 +6,9 @@ import org.library.system.model.Book;
 import org.library.system.model.LoanDetails;
 import org.library.system.model.User;
 import org.library.system.model.Loan;
-import org.library.system.enums.LoanStatus;
-import org.library.system.enums.RequestStatus;
-import org.library.system.enums.Role;
+import org.library.system.model.enums.LoanStatus;
+import org.library.system.model.enums.RequestStatus;
+import org.library.system.model.enums.Role;
 import org.library.system.utils.SessionManager; // Importamos el manejador de sesiones
 
 import java.time.LocalDate;

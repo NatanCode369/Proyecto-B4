@@ -47,8 +47,7 @@ public class RegisterController {
 
         System.out.println("INICIANDO REGISTRO");
 
-        if (validations.isEmpty(name)) {
-            System.out.println("Error: El nombre está vacío");
+        if (txtName.getText().isEmpty()) {
             return;
         }
         if (validations.isEmpty(email)) {

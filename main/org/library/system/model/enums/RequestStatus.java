@@ -1,4 +1,4 @@
-package org.library.system.enums;
+package org.library.system.model.enums;
 
 /**
  *
