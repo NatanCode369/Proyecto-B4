@@ -6,6 +6,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.Validations;
 
 public class CatalogController {
@@ -81,72 +83,31 @@ public class CatalogController {
         btnClear.setManaged(editMode);
         btnNewBorrowing.setVisible(editMode);
         btnNewBorrowing.setManaged(editMode);
-        System.out.println("CatalogController initialized - EditMode: " + editMode);
     }
 
     @FXML
     private void handleAddBook() {
-        if (!editMode) {
-            System.out.println("No tiene permisos para agregar libros");
+        if (!editMode)
+            AlertUtils.instanceAlert().show(AppStatus.FORBIDDEN,
+                    "No tiene permiso para añadir libros.");
+
+        if ((txtTitle.getText().isEmpty() || txtTitle.getText().isBlank()) ||
+                (txtIsbn.getText().isEmpty() || txtIsbn.getText().isBlank()) ||
+                (txtAuthor.getText().isEmpty() || txtAuthor.getText().isBlank()) ||
+                (txtPublisher.getText().isEmpty() || txtPublisher.getText().isBlank()) ||
+                (txtYear.getText().isEmpty() || txtYear.getText().isBlank()) ||
+                txtCopies.getText().isEmpty() || txtCopies.getText().isBlank()) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Campos obligatorios vacíos");
             return;
         }
 
-        String isbn = txtIsbn.getText();
-        String title = txtTitle.getText();
-        String author = txtAuthor.getText();
-        String publisher = txtPublisher.getText();
-        String year = txtYear.getText();
-        String copies = txtCopies.getText();
-
-        System.out.println("=== AGREGANDO LIBRO ===");
-
-        if (validations.isEmpty(isbn)) {
-            System.out.println("Error: El ISBN está vacío");
-            return;
-        }
-        if (validations.isEmpty(title)) {
-            System.out.println("Error: El título está vacío");
-            return;
-        }
-        if (validations.isEmpty(author)) {
-            System.out.println("Error: El autor está vacío");
-            return;
-        }
-        if (validations.isEmpty(publisher)) {
-            System.out.println("Error: La editorial está vacía");
-            return;
-        }
-        if (validations.isEmpty(year)) {
-            System.out.println("Error: El año está vacío");
-            return;
-        }
-        if (validations.isEmpty(copies)) {
-            System.out.println("Error: La cantidad de copias está vacía");
-            return;
+        if (Validations.getInstancevalidations().validateIsbn(txtIsbn.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Formato incorrecto del ISBN.");
         }
 
-        if (!validations.validateInteger(year)) {
-            System.out.println("Error: El año debe ser un número");
-            return;
-        }
-
-        if (!validations.validateInteger(copies)) {
-            System.out.println("Error: La cantidad de copias debe ser un número");
-            return;
-        }
-        int copiesInt = Integer.parseInt(copies);
-        if (!validations.validatePositiveNumber(copiesInt)) {
-            System.out.println("Error: La cantidad de copias debe ser mayor que cero");
-            return;
-        }
-
-        System.out.println("Libro agregado exitosamente (simulado)");
-        System.out.println("  ISBN: " + isbn);
-        System.out.println("  Título: " + title);
-        System.out.println("  Autor: " + author);
-        System.out.println("  Editorial: " + publisher);
-        System.out.println("  Año: " + year);
-        System.out.println("  Copias: " + copies);
+        // Terminar validaciones de los campos
 
         // TODO: Aquí iría el guardado en la base de datos
 

@@ -6,6 +6,8 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.Validations;
 
 public class LoginController {
@@ -22,11 +24,7 @@ public class LoginController {
     @FXML
     private Hyperlink hlRegister;
 
-    private final Validations validations;
-
-    public LoginController() {
-        this.validations = new Validations();
-    }
+    public LoginController() {}
 
     @FXML
     public void initialize() {
@@ -35,31 +33,16 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        String userCode = txtEmail.getText();
-        String password = txtPassword.getText();
-
-        System.out.println("=== INICIANDO LOGIN ===");
-
-        // Validar que los campos no estén vacíos
-        if (validations.isEmpty(userCode)) {
-            System.out.println("Error: El código de usuario está vacío");
+        if ((txtEmail.getText().isEmpty() || txtEmail.getText().isBlank()) ||
+                (txtPassword.getText().isEmpty() || txtPassword.getText().isBlank())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Campos obligatorios vacíos");
             return;
         }
-        if (validations.isEmpty(password)) {
-            System.out.println("Error: La contraseña está vacía");
-            return;
-        }
-
-        System.out.println("Usuario: " + userCode);
-        System.out.println("Contraseña ingresada");
 
         // TODO: Aquí iría la validación con la base de datos
-        // Por ahora, simulamos un login ._.
-        System.out.println("Login exitoso (simulado)");
 
-        // Asignar rol por defecto para pruebas
-        String role = "Bibliotecario Jefe";
-        DashboardController.setRole(role);
+
 
         // Redirigir al Dashboard
         Stage currentStage = (Stage) btnLogin.getScene().getWindow();

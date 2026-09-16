@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.library.system.model.User;
 
 public class DashboardController {
 
@@ -38,7 +39,7 @@ public class DashboardController {
     }
 
     @FXML
-    public void initialize() {
+    public void initialize(User usuario) {
         lblWelcome.setText("Bienvenido al Sistema Bibliotecario");
         lblRole.setText("Rol: " + currentRole);
 
@@ -54,32 +55,24 @@ public class DashboardController {
         btnMyBorrowings.setVisible(false);
         btnMyBorrowings.setManaged(false);
 
-        // Mostrar según el rol
-        if (currentRole != null) {
-            switch (currentRole) {
-                case "Bibliotecario Jefe":
-                    btnCatalog.setVisible(true);
-                    btnCatalog.setManaged(true);
-                    btnBorrowings.setVisible(true);
-                    btnBorrowings.setManaged(true);
-                    btnManageLibrarians.setVisible(true);
-                    btnManageLibrarians.setManaged(true);
-                    break;
-
-                case "Bibliotecario":
-                    btnManageLibrarians.setVisible(true);
-                    btnManageLibrarians.setManaged(true);
-                    break;
-
-                case "Estudiante":
-                    btnConsultCatalog.setVisible(true);
-                    btnConsultCatalog.setManaged(true);
-                    btnMyBorrowings.setVisible(true);
-                    btnMyBorrowings.setManaged(true);
-                    break;
-
-                default:
-                    break;
+        switch (usuario.getUser_role()) {
+            case MANAGER -> {
+                btnCatalog.setVisible(true);
+                btnCatalog.setManaged(true);
+                btnBorrowings.setVisible(true);
+                btnBorrowings.setManaged(true);
+                btnManageLibrarians.setVisible(true);
+                btnManageLibrarians.setManaged(true);
+            }
+            case LIBRARIAN -> {
+                btnManageLibrarians.setVisible(true);
+                btnManageLibrarians.setManaged(true);
+            }
+            default -> {
+                btnConsultCatalog.setVisible(true);
+                btnConsultCatalog.setManaged(true);
+                btnMyBorrowings.setVisible(true);
+                btnMyBorrowings.setManaged(true);
             }
         }
     }
