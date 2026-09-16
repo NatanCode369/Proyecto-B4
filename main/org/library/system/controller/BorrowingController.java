@@ -1,180 +1,112 @@
 package org.library.system.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
-import org.library.system.utils.Validations;
+import org.library.system.utils.SceneManager;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class BorrowingController {
 
-    @FXML
-    private TextField txtStudentId;
-
-    @FXML
-    private TextField txtIsbn;
-
-    @FXML
-    private TextField txtBookTitle;
-
-    @FXML
-    private Label lblStudentName;
-
-    @FXML
-    private Label lblStudentEmail;
-
-    @FXML
-    private Label lblBorrowDate;
-
-    @FXML
-    private DatePicker dpDueDate;
-
-    @FXML
-    private TableView<Copy> tableCopies;
-
-    @FXML
-    private TableColumn<Copy, String> colBarcode;
-
-    @FXML
-    private TableColumn<Copy, String> colStatus;
-
-    @FXML
-    private TableColumn<Copy, Void> colSelect;
-
-    @FXML
-    private Button btnSearchStudent;
-
-    @FXML
-    private Button btnSearchBook;
-
-    @FXML
-    private Button btnGenerateBorrowing;
-
-    @FXML
-    private Button btnPrintReceipt;
-
-    @FXML
-    private Button btnBack;
-
-    private final Validations validations;
-
-    public BorrowingController() {
-        this.validations = new Validations();
-    }
+    @FXML private TextField txtStudentId;
+    @FXML private TextField txtIsbn;
+    @FXML private TextField txtBookTitle;
+    @FXML private Label lblStudentName;
+    @FXML private Label lblStudentEmail;
+    @FXML private Label lblBorrowDate;
+    @FXML private DatePicker dpDueDate;
+    @FXML private TableView<Copy> tableCopies;
+    @FXML private TableColumn<Copy, String> colBarcode;
+    @FXML private TableColumn<Copy, String> colStatus;
+    @FXML private TableColumn<Copy, Void> colSelect;
+    @FXML private Button btnSearchStudent;
+    @FXML private Button btnSearchBook;
+    @FXML private Button btnGenerateBorrowing;
+    @FXML private Button btnPrintReceipt;
+    @FXML private Button btnBack;
 
     @FXML
     public void initialize() {
+        System.out.println("[BORROWING] Inicializando ventana de prestamos");
         lblBorrowDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-
         colBarcode.setCellValueFactory(new PropertyValueFactory<>("barcode"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-        colSelect.setCellFactory(param -> new TableCell<>() {
-            private final Button selectBtn = new Button("Seleccionar");
-
-            {
-                selectBtn.setOnAction(event -> {
-                    Copy copy = getTableView().getItems().get(getIndex());
-                    selectCopy(copy);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(selectBtn);
-                }
-            }
-        });
-
         loadTestCopies();
-        System.out.println("BorrowingController initialized");
+        System.out.println("[BORROWING] Ventana de prestamos lista");
     }
 
     @FXML
     private void handleSearchStudent() {
+        System.out.println("[BORROWING] Iniciando busqueda de estudiante");
         String id = txtStudentId.getText();
+        System.out.println("[BORROWING] Carnet ingresado: " + id);
 
-        if (validations.isEmpty(id)) {
-            System.out.println("Error: Ingrese un carnet");
+        if (id == null || id.isBlank()) {
+            System.out.println("[BORROWING] ERROR: El carnet esta vacio");
             return;
         }
 
-        System.out.println("Buscando estudiante con carnet: " + id);
-        // Simulación
+        System.out.println("[BORROWING] (SIMULADO) Estudiante encontrado");
         lblStudentName.setText("Nombre: Juan Perez");
         lblStudentEmail.setText("Correo: juan.perez@universidad.edu");
-        System.out.println("Estudiante encontrado (simulado)");
+        System.out.println("[BORROWING] Busqueda de estudiante finalizada");
     }
 
     @FXML
     private void handleSearchBook() {
+        System.out.println("[BORROWING] Iniciando busqueda de libro");
         String isbn = txtIsbn.getText();
         String title = txtBookTitle.getText();
+        System.out.println("[BORROWING] ISBN: " + isbn + " | Titulo: " + title);
 
-        if (validations.isEmpty(isbn) && validations.isEmpty(title)) {
-            System.out.println("Error: Ingrese ISBN o título para buscar");
+        if ((isbn == null || isbn.isBlank()) && (title == null || title.isBlank())) {
+            System.out.println("[BORROWING] ERROR: Ingrese ISBN o titulo");
             return;
         }
 
-        System.out.println("Buscando libro: ISBN=" + isbn + ", Título=" + title);
+        System.out.println("[BORROWING] (SIMULADO) Ejemplares cargados");
         loadTestCopies();
-        System.out.println("Libro encontrado (simulado)");
-    }
-
-    private void selectCopy(Copy copy) {
-        System.out.println("Ejemplar seleccionado: " + copy.getBarcode());
+        System.out.println("[BORROWING] Busqueda de libro finalizada");
     }
 
     @FXML
     private void handleGenerateBorrowing() {
-        System.out.println("=== GENERANDO PRÉSTAMO ===");
+        System.out.println("[BORROWING] Iniciando generacion de prestamo");
 
-        // Validar que se haya seleccionado una fecha
         if (dpDueDate.getValue() == null) {
-            System.out.println("Error: Debe seleccionar una fecha límite");
+            System.out.println("[BORROWING] ERROR: Seleccione una fecha limite");
             return;
         }
-
-        // Validar que se haya buscado un estudiante
         if (lblStudentName.getText().equals("Nombre: -")) {
-            System.out.println("Error: Debe buscar un estudiante");
+            System.out.println("[BORROWING] ERROR: Busque un estudiante primero");
             return;
         }
 
-        // Validar que se haya seleccionado un ejemplar
-        if (tableCopies.getSelectionModel().isEmpty()) {
-            System.out.println("Error: Debe seleccionar un ejemplar de la tabla");
-            return;
-        }
-
-        System.out.println("Préstamo generado exitosamente (simulado)");
-        System.out.println("  Estudiante: " + lblStudentName.getText());
-        System.out.println("  Fecha límite: " + dpDueDate.getValue().toString());
-
-        // TODO: Aquí iría el guardado en la base de datos
+        System.out.println("[BORROWING] (SIMULADO) Prestamo registrado exitosamente");
+        System.out.println("[BORROWING] Generacion de prestamo finalizada");
     }
 
     @FXML
     private void handlePrintReceipt() {
-        System.out.println("Imprimiendo comprobante...");
-        // TODO: Generar comprobante
+        System.out.println("[BORROWING] Iniciando impresion de comprobante");
+        System.out.println("[BORROWING] (SIMULADO) Comprobante generado");
+        System.out.println("[BORROWING] Impresion finalizada");
     }
 
     @FXML
     private void handleBack() {
-        Stage currentStage = (Stage) btnBack.getScene().getWindow();
-        SceneManagerController.changeScene(
-                currentStage,
-                "/org/library/system/view/DashboardView.fxml",
-                "Panel Principal"
-        );
+        System.out.println("[BORROWING] Regresando al panel principal");
+        goTo("/org/library/system/view/DashboardView.fxml");
     }
 
     private void loadTestCopies() {
@@ -184,6 +116,16 @@ public class BorrowingController {
                 new Copy("DEF-456", "Disponible"),
                 new Copy("GHI-789", "Prestado")
         );
+    }
+
+    private void goTo(String path) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            Scene scene = new Scene(loader.load());
+            SceneManager.getInstanciaSceneManager().changeScene(scene);
+        } catch (IOException e) {
+            System.out.println("[BORROWING] ERROR al navegar: " + e.getMessage());
+        }
     }
 
     public static class Copy {
