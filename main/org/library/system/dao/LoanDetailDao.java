@@ -1,6 +1,6 @@
 package dao;
 
-import config.DatabaseConnection;
+import config.ConectionDB;
 import model.LoanDetail;
 
 import java.sql.*;
