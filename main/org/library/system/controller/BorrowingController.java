@@ -81,9 +81,11 @@ public class BorrowingController {
 
     @FXML
     private void handleSearchBook() {
-        if (txtIsbn.getText().isEmpty() && txtBookTitle.getText().isEmpty()) {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Ingrese el ISBN o el título del libro que desea buscar.");
+        String isbn = txtIsbn.getText();
+        String title = txtBookTitle.getText();
+
+        if (validations.isEmpty(isbn) && validations.isEmpty(title)) {
+            System.out.println("Error: Ingrese ISBN o título para buscar");
             return;
         } else {
             //Consulta a la DB para buscar el ISBN o el título del libro y demás procesos.
@@ -92,8 +94,15 @@ public class BorrowingController {
 
     @FXML
     private void handleGenerateBorrowing() {
+        System.out.println("[BORROWING] Iniciando generacion de prestamo");
+
         // Validar que se haya seleccionado una fecha
         if (dpDueDate.getValue() == null) {
+            System.out.println("[BORROWING] ERROR: Seleccione una fecha limite");
+            return;
+        }
+        if (lblStudentName.getText().equals("Nombre: -")) {
+            System.out.println("[BORROWING] ERROR: Busque un estudiante primero");
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Debe agregar una fecha límite.");
             return;
