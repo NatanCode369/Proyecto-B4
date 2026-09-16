@@ -5,6 +5,14 @@ package org.library.system.utils;
  * Todas las validaciones retornan boolean e imprimen mensajes de error por consola.
  */
 public class Validations {
+    private static Validations instancevalidations;
+
+    public static Validations getInstancevalidations() {
+        if (instancevalidations == null) {
+            instancevalidations = new Validations();
+        }
+        return  instancevalidations;
+    }
 
     /**
      * Valida si un texto está vacío o es null.
@@ -84,15 +92,10 @@ public class Validations {
      */
     public boolean validateEmail(String email) {
         if (email == null) {
-            System.out.println("Error: El correo es null");
             return false;
         }
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-        boolean result = email.matches(emailRegex);
-        if (!result) {
-            System.out.println("Error: El correo '" + email + "' no tiene un formato válido");
-        }
-        return result;
+        return email.matches(emailRegex);
     }
 
     /**
@@ -131,17 +134,12 @@ public class Validations {
      * Valida formato ISBN (10 o 13 dígitos).
      */
     public boolean validateIsbn(String isbn) {
-        if (isbn == null || isbn.isEmpty()) {
-            System.out.println("Error: El ISBN está vacío");
+        if (isbn == null || isbn.isEmpty())
             return false;
-        }
         String cleanIsbn = isbn.replaceAll("[-\\s]", "");
-        String isbnRegex = "^(97[8-9])?[0-9]{10}$|^[0-9]{13}$";
-        boolean result = cleanIsbn.matches(isbnRegex);
-        if (!result) {
-            System.out.println("Error: El ISBN '" + isbn + "' no es válido (debe ser 10 o 13 dígitos)");
-        }
-        return result;
+        String isbnRegexNumbers = "^(97[8-9])?[0-9]{10}$|^[0-9]{13}$";
+        String isbnRegexLetters = ".*[a-zA-Z].*";
+        return cleanIsbn.matches(isbnRegexNumbers) || !cleanIsbn.matches(isbnRegexLetters) ;
     }
 
     /**
@@ -263,15 +261,15 @@ public class Validations {
      * Valida que un texto sea un número entero.
      */
     public boolean validateInteger(String text) {
-        if (text == null || text.isEmpty()) {
-            System.out.println("Error: El campo está vacío");
+        if (text == null || text.isEmpty())
             return false;
-        }
+
         try {
             Integer.parseInt(text);
             return true;
         } catch (NumberFormatException e) {
-            System.out.println("Error: '" + text + "' no es un número entero válido");
+            AlertUtils.instanceAlert().show(AppStatus.CONFLICT,
+                    "Formato de año ingresado incorrecto.");
             return false;
         }
     }
