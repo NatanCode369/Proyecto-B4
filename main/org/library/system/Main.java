@@ -18,3 +18,15 @@ public class Main extends Application {
         launch(args);
     }
 }
+
+public class Main extends Application {
+    public static void main(String[] args) {
+        launch(Application.class, args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+
+    }
+}
+

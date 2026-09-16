@@ -10,4 +10,6 @@ package org.library.system.enums;
  */
 public enum LoanStatus {
     ACTIVE, RETURNED, EXPIRED
+
+    ACTIVE, RETURNED, OVERDUE
 }

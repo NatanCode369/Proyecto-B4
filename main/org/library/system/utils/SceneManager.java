@@ -15,6 +15,13 @@ public class SceneManager {
     }
 
     public void setPrimaryStage(Stage primaryStage) {
+
+    private Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    private void setPrimaryStage(Stage primaryStage) {
+
         this.primaryStage = primaryStage;
     }
 
@@ -34,3 +41,6 @@ public class SceneManager {
         }
     }
 }
+
+}
+

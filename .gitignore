@@ -2,3 +2,5 @@
 *.iml
 out/*
 Environment.java
+
+*.iml
