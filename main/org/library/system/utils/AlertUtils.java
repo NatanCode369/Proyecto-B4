@@ -5,12 +5,12 @@ import javafx.scene.control.Alert;
 
 public class AlertUtils {
     private final Alert alert = new Alert(Alert.AlertType.NONE);
-    private static AlertUtils alertUtils;
+    private static AlertUtils instanceAlertUtils;
 
     public static AlertUtils instanceAlert() {
-        if (alertUtils == null)
-            alertUtils = new AlertUtils();
-        return alertUtils;
+        if (instanceAlertUtils == null)
+            instanceAlertUtils = new AlertUtils();
+        return instanceAlertUtils;
     }
 
     private Alert.AlertType toAlertType(AppStatus.Severity severity) {
@@ -33,7 +33,7 @@ public class AlertUtils {
                             status.getDescriptionMessage(): detail
             );
         };
-        alert.show();
+        alert.showAndWait();
 
         // Verifica si el hilo actual es el hilo de JavaFX
         if (Platform.isFxApplicationThread()) {
