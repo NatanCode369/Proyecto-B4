@@ -1,6 +1,6 @@
 package dao;
 
-import config.DatabaseConnection;
+import config.ConectionDB;
 import model.Book;
 
 import java.sql.*;
