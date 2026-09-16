@@ -4,8 +4,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Controlador central para la gestión de cambios de escena.
@@ -30,9 +33,9 @@ public final class SceneManagerController {
             Scene scene = new Scene(loader.load());
 
             Image icon = new Image(
-                    SceneManagerController.class.getResourceAsStream(
+                    Objects.requireNonNull(SceneManagerController.class.getResourceAsStream(
                             "/org/library/system/resources/images/library-Book.png"
-                    )
+                    ))
             );
             stage.getIcons().add(icon);
 
@@ -43,8 +46,8 @@ public final class SceneManagerController {
             stage.show();
 
         } catch (IOException e) {
-            System.err.println("Error al cargar la vista: " + fxmlPath);
-            e.printStackTrace();
+            AlertUtils.instanceAlert().show(AppStatus.UNEXPECTED_ERROR,
+                    "Hubo un problema en la continuidad del programa, intenté de nuevo.");
         }
     }
 
