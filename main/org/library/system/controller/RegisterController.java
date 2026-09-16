@@ -1,14 +1,16 @@
 package org.library.system.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.library.system.dao.UserDao;
+import org.library.system.enums.Role;
+import org.library.system.model.User;
+import org.library.system.utils.PasswordUtil;
 import org.library.system.utils.SceneManager;
 
-import java.io.IOException;
+import java.sql.SQLException;
 
 public class RegisterController {
 
@@ -19,81 +21,59 @@ public class RegisterController {
     @FXML private Button btnRegister;
     @FXML private Button btnCancel;
 
+    private final UserDao userDao = new UserDao();
+
     @FXML
     public void initialize() {
-        System.out.println("[REGISTER] Inicializando ventana de registro");
-        System.out.println("[REGISTER] Ventana de registro lista");
+        // Inicializacion del controlador
     }
 
     @FXML
     private void handleRegister() {
-        System.out.println("[REGISTER] Iniciando proceso de registro");
-        System.out.println("[REGISTER] Leyendo datos del formulario");
-
         String fullName = txtName.getText();
         String email = txtEmail.getText();
         String password = txtPassword.getText();
         String confirm = txtConfirmPassword.getText();
 
-        System.out.println("[REGISTER] Nombre: " + fullName);
-        System.out.println("[REGISTER] Correo: " + email);
+        if (fullName == null || fullName.isBlank()) return;
+        if (email == null || email.isBlank()) return;
+        if (password == null || password.isBlank()) return;
+        if (confirm == null || confirm.isBlank()) return;
+        if (!password.equals(confirm)) return;
 
-        // Validación
-        System.out.println("[REGISTER] Validando campos vacios");
+        try {
+            String[] parts = fullName.trim().split(" ", 2);
+            String firstName = parts[0];
+            String lastName = parts.length > 1 ? parts[1] : "";
+            String userCode = email.split("@")[0].toUpperCase();
 
-        if (fullName == null || fullName.isBlank()) {
-            System.out.println("[REGISTER] ERROR: El nombre esta vacio");
-            return;
+            if (userDao.findByCode(userCode).isPresent()) return;
+            if (userDao.findByEmail(email.trim()).isPresent()) return;
+
+            User user = new User();
+            user.setUser_code(userCode);
+            user.setFirst_name(firstName);
+            user.setLast_name(lastName);
+            user.setEmail(email.trim().toLowerCase());
+            user.setPassword_hash(PasswordUtil.hash(password));
+            user.setUser_role(Role.MANAGER);
+            user.setActive(true);
+
+            userDao.create(user);
+
+            SceneManager.getInstanciaSceneManager().goTo(
+                    "/org/library/system/view/LoginView.fxml"
+            );
+
+        } catch (SQLException e) {
+            System.err.println("Error de base de datos: " + e.getMessage());
         }
-        if (email == null || email.isBlank()) {
-            System.out.println("[REGISTER] ERROR: El correo esta vacio");
-            return;
-        }
-        if (password == null || password.isBlank()) {
-            System.out.println("[REGISTER] ERROR: La contrasena esta vacia");
-            return;
-        }
-        if (confirm == null || confirm.isBlank()) {
-            System.out.println("[REGISTER] ERROR: La confirmacion esta vacia");
-            return;
-        }
-
-        System.out.println("[REGISTER] Campos validados correctamente");
-
-        System.out.println("[REGISTER] Verificando que las contrasenas coincidan");
-
-        if (!password.equals(confirm)) {
-            System.out.println("[REGISTER] ERROR: Las contrasenas no coinciden");
-            return;
-        }
-
-        System.out.println("[REGISTER] Contrasenas verificadas");
-
-        //Simulación de giardar datos xd
-        System.out.println("[REGISTER] (SIMULADO) Guardando usuario en la base de datos");
-        System.out.println("[REGISTER] (SIMULADO) Rol asignado: MANAGER");
-        System.out.println("[REGISTER] (SIMULADO) Usuario registrado exitosamente");
-
-        System.out.println("[REGISTER] Proceso de registro finalizado");
-        System.out.println("[REGISTER] Regresando a la ventana de login");
-
-        goTo("/org/library/system/view/LoginView.fxml");
     }
 
     @FXML
     private void handleCancel() {
-        System.out.println("[REGISTER] Cancelando registro");
-        System.out.println("[REGISTER] Regresando a la ventana de login");
-        goTo("/org/library/system/view/LoginView.fxml");
-    }
-
-    private void goTo(String path) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-            Scene scene = new Scene(loader.load());
-            SceneManager.getInstanciaSceneManager().changeScene(scene);
-        } catch (IOException e) {
-            System.out.println("[REGISTER] ERROR al navegar: " + e.getMessage());
-        }
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/LoginView.fxml"
+        );
     }
 }
