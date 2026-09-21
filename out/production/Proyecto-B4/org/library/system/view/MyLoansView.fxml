@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="600.0" prefWidth="1000.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.MyLoansController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <children>
+        <Label styleClass="label-title" text="Mis Prestamos" />
+
+        <TableView fx:id="tableLoans" prefHeight="450.0">
+            <columns>
+                <TableColumn fx:id="colLoanId" text="ID" prefWidth="60" />
+                <TableColumn fx:id="colBookTitle" text="Libro" prefWidth="250" />
+                <TableColumn fx:id="colLoanDate" text="Fecha Prestamo" prefWidth="150" />
+                <TableColumn fx:id="colDueDate" text="Fecha Limite" prefWidth="150" />
+                <TableColumn fx:id="colStatus" text="Estado" prefWidth="120" />
+            </columns>
+        </TableView>
+
+        <Button fx:id="btnBack" onAction="#handleBack" styleClass="button-back" text="Regresar" />
+    </children>
+</VBox>
