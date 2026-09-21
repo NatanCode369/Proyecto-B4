@@ -55,6 +55,8 @@ public class RegisterController {
             return;
         }
 
+        //terminar validaciones de contraseñas, fortaleza, etc.
+
         if (Validations.getInstancevalidations().validateEmail(
                 txtEmail.getText()
         )) {
