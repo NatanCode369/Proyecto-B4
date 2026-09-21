@@ -5,8 +5,6 @@
 DROP DATABASE IF EXISTS library_borrowing_system_in4am;
 
 CREATE DATABASE library_borrowing_system_in4am
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_0900_ai_ci;
 
 USE library_borrowing_system_in4am;
 
