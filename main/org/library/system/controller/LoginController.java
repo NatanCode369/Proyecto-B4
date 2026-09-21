@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.library.system.utils.AlertUtils;
 import org.library.system.utils.AppStatus;
-import org.library.system.utils.Validations;
 
 public class LoginController {
 
