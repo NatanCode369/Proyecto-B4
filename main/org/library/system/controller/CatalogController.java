@@ -65,10 +65,8 @@ public class CatalogController {
     @FXML
     private TableColumn<?, ?> colCopies;
 
-    private final Validations validations;
-
     public CatalogController() {
-        this.validations = new Validations();
+        Validations validations = new Validations();
     }
 
     public static void setEditMode(boolean editable) {
@@ -105,9 +103,22 @@ public class CatalogController {
         if (Validations.getInstancevalidations().validateIsbn(txtIsbn.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato incorrecto del ISBN.");
+            return;
         }
 
-        // Terminar validaciones de los campos
+        if (Validations.getInstancevalidations().validateInteger(txtIsbn.getText()) &&
+                (Validations.getInstancevalidations().validateInteger(txtCopies.getText())) &&
+                (Validations.getInstancevalidations().validateInteger(txtYear.getText()))) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Los campos númericos contienen letras o no son enteros");
+            return;
+        }
+
+        if (Validations.getInstancevalidations().validateYear(txtYear.getText()) &&
+                (Validations.getInstancevalidations().validatePositiveNumber(Integer.parseInt(txtYear.getText())))) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT, "El formato del año no es correcto.");
+            return;
+        }
 
         // TODO: Aquí iría el guardado en la base de datos
 
@@ -123,7 +134,7 @@ public class CatalogController {
     @FXML
     private void handleNewBorrowing() {
         if (!editMode) {
-            System.out.println("No tiene permisos para registrar préstamos");
+            AlertUtils.instanceAlert().show(AppStatus.FORBIDDEN, "No tiene permisos para registrar préstamos.");
             return;
         }
         Stage currentStage = (Stage) btnNewBorrowing.getScene().getWindow();
