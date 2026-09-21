@@ -1,73 +1,68 @@
 package org.library.system.controller;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
+import org.library.system.dao.BookDao;
+import org.library.system.enums.Role;
+import org.library.system.model.Book;
+import org.library.system.model.User;
+import org.library.system.utils.SceneManager;
+import org.library.system.utils.SessionManager;
 import org.library.system.utils.Validations;
+
+import org.library.system.dao.LoanRequestDao;
+import org.library.system.dao.LoanRequestDetailDao;
+import org.library.system.enums.RequestStatus;
+import org.library.system.model.LoanApplication;
+import org.library.system.model.RequestDetails;
+
+
+import java.sql.SQLException;
+import java.util.List;
 
 public class CatalogController {
 
+    private final LoanRequestDao loanRequestDao = new LoanRequestDao();
+    private final LoanRequestDetailDao loanRequestDetailDao = new LoanRequestDetailDao();
+
     private static boolean editMode = true;
 
-    @FXML
-    private TextField txtIsbn;
+    @FXML private TextField txtSearchTitle;
+    @FXML private TextField txtSearchIsbn;
 
-    @FXML
-    private TextField txtTitle;
+    @FXML private VBox editSection;
+    @FXML private TextField txtIsbn;
+    @FXML private TextField txtTitle;
+    @FXML private TextField txtAuthor;
+    @FXML private TextField txtPublisher;
+    @FXML private TextField txtYear;
+    @FXML private TextField txtCopies;
 
-    @FXML
-    private TextField txtAuthor;
+    @FXML private TableView<Book> tableBooks;
+    @FXML private TableColumn<Book, Integer> colBookId;
+    @FXML private TableColumn<Book, String> colIsbn;
+    @FXML private TableColumn<Book, String> colTitle;
+    @FXML private TableColumn<Book, String> colAuthor;
+    @FXML private TableColumn<Book, String> colPublisher;
+    @FXML private TableColumn<Book, Integer> colYear;
+    @FXML private TableColumn<Book, Integer> colTotalStock;
+    @FXML private TableColumn<Book, Integer> colAvailableStock;
 
-    @FXML
-    private TextField txtPublisher;
+    @FXML private Button btnNewBorrowing;
+    @FXML private Button btnRequestBorrowing;
+    @FXML private Button btnBack;
 
-    @FXML
-    private TextField txtYear;
-
-    @FXML
-    private TextField txtCopies;
-
-    @FXML
-    private Button btnAdd;
-
-    @FXML
-    private Button btnClear;
-
-    @FXML
-    private Button btnNewBorrowing;
-
-    @FXML
-    private Button btnBack;
-
-    @FXML
-    private TableView<?> tableBooks;
-
-    @FXML
-    private TableColumn<?, ?> colIsbn;
-
-    @FXML
-    private TableColumn<?, ?> colTitle;
-
-    @FXML
-    private TableColumn<?, ?> colAuthor;
-
-    @FXML
-    private TableColumn<?, ?> colPublisher;
-
-    @FXML
-    private TableColumn<?, ?> colYear;
-
-    @FXML
-    private TableColumn<?, ?> colCopies;
-
-    private final Validations validations;
-
-    public CatalogController() {
-        this.validations = new Validations();
-    }
+    private final BookDao bookDao = new BookDao();
+    private final Validations validations = new Validations();
+    private final ObservableList<Book> bookList = FXCollections.observableArrayList();
 
     public static void setEditMode(boolean editable) {
         editMode = editable;
@@ -75,111 +70,156 @@ public class CatalogController {
 
     @FXML
     public void initialize() {
-        btnAdd.setVisible(editMode);
-        btnAdd.setManaged(editMode);
-        btnClear.setVisible(editMode);
-        btnClear.setManaged(editMode);
-        btnNewBorrowing.setVisible(editMode);
-        btnNewBorrowing.setManaged(editMode);
-        System.out.println("CatalogController initialized - EditMode: " + editMode);
+        User user = SessionManager.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        Role role = user.getUser_role();
+
+        boolean canEdit = (role == Role.LIBRARIAN || role == Role.MANAGER);
+        editSection.setVisible(canEdit);
+        editSection.setManaged(canEdit);
+        btnNewBorrowing.setVisible(canEdit);
+        btnNewBorrowing.setManaged(canEdit);
+
+        boolean isStudent = (role == Role.STUDENT);
+        btnRequestBorrowing.setVisible(isStudent);
+        btnRequestBorrowing.setManaged(isStudent);
+
+        configureTable();
+        loadBooks();
+    }
+
+    private void configureTable() {
+        colBookId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getBook_id()).asObject());
+        colIsbn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getIsbn()));
+        colTitle.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
+        colAuthor.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAuthor()));
+        colPublisher.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPublisher()));
+        colYear.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getPublication_year()).asObject());
+        colTotalStock.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getTotal_stock()).asObject());
+        colAvailableStock.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getAvailable_stock()).asObject());
+        tableBooks.setItems(bookList);
+    }
+
+    private void loadBooks() {
+        try {
+            List<Book> books = bookDao.search("");
+            bookList.setAll(books);
+        } catch (SQLException e) {
+            System.err.println("Error al cargar libros: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSearch() {
+        String title = txtSearchTitle.getText();
+        String isbn = txtSearchIsbn.getText();
+
+        String filter = "";
+        if (title != null && !title.isBlank()) filter = title.trim();
+        else if (isbn != null && !isbn.isBlank()) filter = isbn.trim();
+
+        try {
+            List<Book> results = bookDao.search(filter);
+            bookList.setAll(results);
+        } catch (SQLException e) {
+            System.err.println("Error al buscar: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleClearSearch() {
+        txtSearchTitle.clear();
+        txtSearchIsbn.clear();
+        loadBooks();
     }
 
     @FXML
     private void handleAddBook() {
-        if (!editMode) {
-            System.out.println("No tiene permisos para agregar libros");
-            return;
-        }
-
         String isbn = txtIsbn.getText();
         String title = txtTitle.getText();
         String author = txtAuthor.getText();
         String publisher = txtPublisher.getText();
-        String year = txtYear.getText();
-        String copies = txtCopies.getText();
+        String yearStr = txtYear.getText();
+        String copiesStr = txtCopies.getText();
 
-        System.out.println("=== AGREGANDO LIBRO ===");
-
-        if (validations.isEmpty(isbn)) {
-            System.out.println("Error: El ISBN está vacío");
+        if (validations.isEmpty(isbn) || validations.isEmpty(title)
+                || validations.isEmpty(author) || validations.isEmpty(publisher)
+                || validations.isEmpty(yearStr) || validations.isEmpty(copiesStr)) {
             return;
         }
-        if (validations.isEmpty(title)) {
-            System.out.println("Error: El título está vacío");
-            return;
-        }
-        if (validations.isEmpty(author)) {
-            System.out.println("Error: El autor está vacío");
-            return;
-        }
-        if (validations.isEmpty(publisher)) {
-            System.out.println("Error: La editorial está vacía");
-            return;
-        }
-        if (validations.isEmpty(year)) {
-            System.out.println("Error: El año está vacío");
-            return;
-        }
-        if (validations.isEmpty(copies)) {
-            System.out.println("Error: La cantidad de copias está vacía");
+        if (!validations.validateInteger(yearStr) || !validations.validateInteger(copiesStr)) {
             return;
         }
 
-        if (!validations.validateInteger(year)) {
-            System.out.println("Error: El año debe ser un número");
-            return;
+        try {
+            int year = Integer.parseInt(yearStr);
+            int copies = Integer.parseInt(copiesStr);
+
+            Book book = new Book();
+            book.setIsbn(isbn.trim());
+            book.setTitle(title.trim());
+            book.setAuthor(author.trim());
+            book.setPublisher(publisher.trim());
+            book.setPublication_year(year);
+            book.setTotal_stock(copies);
+            book.setAvailable_stock(copies);
+            book.setActive(true);
+
+            bookDao.create(book);
+            loadBooks();
+            clearFields();
+
+        } catch (SQLException e) {
+            System.err.println("Error al crear libro: " + e.getMessage());
         }
-
-        if (!validations.validateInteger(copies)) {
-            System.out.println("Error: La cantidad de copias debe ser un número");
-            return;
-        }
-        int copiesInt = Integer.parseInt(copies);
-        if (!validations.validatePositiveNumber(copiesInt)) {
-            System.out.println("Error: La cantidad de copias debe ser mayor que cero");
-            return;
-        }
-
-        System.out.println("Libro agregado exitosamente (simulado)");
-        System.out.println("  ISBN: " + isbn);
-        System.out.println("  Título: " + title);
-        System.out.println("  Autor: " + author);
-        System.out.println("  Editorial: " + publisher);
-        System.out.println("  Año: " + year);
-        System.out.println("  Copias: " + copies);
-
-        // TODO: Aquí iría el guardado en la base de datos
-
-        clearFields();
     }
 
     @FXML
     private void handleClearFields() {
         clearFields();
-        System.out.println("Campos limpiados");
     }
 
     @FXML
     private void handleNewBorrowing() {
-        if (!editMode) {
-            System.out.println("No tiene permisos para registrar préstamos");
-            return;
-        }
-        Stage currentStage = (Stage) btnNewBorrowing.getScene().getWindow();
-        SceneManagerController.changeScene(
-                currentStage,
-                "/org/library/system/view/BorrowingView.fxml",
-                "Registrar Prestamo"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/BorrowingView.fxml"
         );
     }
 
     @FXML
+    private void handleRequestBorrowing() {
+        Book selected = tableBooks.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        User user = SessionManager.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        try {
+            LoanApplication request = new LoanApplication();
+            request.setStudent_id(user.getUser_id());
+            request.setStatus(RequestStatus.PENDING);
+
+            int requestId = loanRequestDao.create(request);
+
+            RequestDetails detail = new RequestDetails();
+            detail.setRequest_id(requestId);
+            detail.setBook_id(selected.getBook_id());
+            detail.setQuantity(1);
+            loanRequestDetailDao.create(detail);
+
+            bookList.setAll(bookDao.search(""));
+            tableBooks.getSelectionModel().clearSelection();
+
+        } catch (SQLException e) {
+            System.err.println("Error al solicitar prestamo: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void handleBack() {
-        Stage currentStage = (Stage) btnBack.getScene().getWindow();
-        SceneManagerController.changeScene(
-                currentStage,
-                "/org/library/system/view/DashboardView.fxml",
-                "Panel Principal"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/DashboardView.fxml"
         );
     }
 

@@ -3,138 +3,128 @@ package org.library.system.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import org.library.system.enums.Role;
+import org.library.system.model.User;
+import org.library.system.utils.SceneManager;
+import org.library.system.utils.SessionManager;
 
 public class DashboardController {
 
-    private static String currentRole;
-
-    @FXML
-    private Label lblWelcome;
-
-    @FXML
-    private Label lblRole;
-
-    @FXML
-    private Button btnCatalog;
-
-    @FXML
-    private Button btnBorrowings;
-
-    @FXML
-    private Button btnManageLibrarians;
-
-    @FXML
-    private Button btnConsultCatalog;
-
-    @FXML
-    private Button btnMyBorrowings;
-
-    @FXML
-    private Button btnLogout;
-
-    public static void setRole(String role) {
-        currentRole = role;
-    }
+    @FXML private Label lblWelcome;
+    @FXML private Label lblRole;
+    @FXML private Button btnCatalog;
+    @FXML private Button btnBorrowings;
+    @FXML private Button btnPendingRequests;
+    @FXML private Button btnManageLibrarians;
+    @FXML private Button btnConsultCatalog;
+    @FXML private Button btnMyBorrowings;
+    @FXML private Button btnLogout;
 
     @FXML
     public void initialize() {
-        lblWelcome.setText("Bienvenido al Sistema Bibliotecario");
-        lblRole.setText("Rol: " + currentRole);
+        User user = SessionManager.getInstance().getCurrentUser();
 
-        // Ocultar todos los botones por defecto
-        btnCatalog.setVisible(false);
-        btnCatalog.setManaged(false);
-        btnBorrowings.setVisible(false);
-        btnBorrowings.setManaged(false);
-        btnManageLibrarians.setVisible(false);
-        btnManageLibrarians.setManaged(false);
-        btnConsultCatalog.setVisible(false);
-        btnConsultCatalog.setManaged(false);
-        btnMyBorrowings.setVisible(false);
-        btnMyBorrowings.setManaged(false);
+        if (user == null) {
+            SceneManager.getInstanciaSceneManager().goTo(
+                    "/org/library/system/view/LoginView.fxml"
+            );
+            return;
+        }
 
-        // Mostrar según el rol
-        if (currentRole != null) {
-            switch (currentRole) {
-                case "Bibliotecario Jefe":
-                    btnCatalog.setVisible(true);
-                    btnCatalog.setManaged(true);
-                    btnBorrowings.setVisible(true);
-                    btnBorrowings.setManaged(true);
-                    btnManageLibrarians.setVisible(true);
-                    btnManageLibrarians.setManaged(true);
-                    break;
+        lblWelcome.setText("Bienvenido, "
+                + user.getFirst_name() + " " + user.getLast_name());
+        lblRole.setText("Rol: " + displayRole(user.getUser_role()));
 
-                case "Bibliotecario":
-                    btnManageLibrarians.setVisible(true);
-                    btnManageLibrarians.setManaged(true);
-                    break;
+        hideAll();
 
-                case "Estudiante":
-                    btnConsultCatalog.setVisible(true);
-                    btnConsultCatalog.setManaged(true);
-                    btnMyBorrowings.setVisible(true);
-                    btnMyBorrowings.setManaged(true);
-                    break;
-
-                default:
-                    break;
+        switch (user.getUser_role()) {
+            case MANAGER -> {
+                show(btnManageLibrarians);
+                show(btnPendingRequests);
+            }
+            case LIBRARIAN -> {
+                show(btnCatalog);
+                show(btnBorrowings);
+                show(btnPendingRequests);
+            }
+            case STUDENT -> {
+                show(btnConsultCatalog);
+                show(btnMyBorrowings);
             }
         }
+    }
+
+    private String displayRole(Role role) {
+        return switch (role) {
+            case MANAGER -> "Bibliotecario Jefe";
+            case LIBRARIAN -> "Bibliotecario";
+            case STUDENT -> "Estudiante";
+        };
+    }
+
+    private void hideAll() {
+        for (Button b : new Button[]{
+                btnCatalog, btnBorrowings, btnPendingRequests,
+                btnManageLibrarians, btnConsultCatalog, btnMyBorrowings}) {
+            b.setVisible(false);
+            b.setManaged(false);
+        }
+    }
+
+    private void show(Button b) {
+        b.setVisible(true);
+        b.setManaged(true);
     }
 
     @FXML
     private void handleOpenCatalog() {
         CatalogController.setEditMode(true);
-        Stage currentStage = (Stage) btnCatalog.getScene().getWindow();
-        SceneManagerController.changeScene(
-                currentStage,
-                "/org/library/system/view/CatalogView.fxml",
-                "Gestion de Catalogo"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/CatalogView.fxml"
         );
     }
 
     @FXML
     private void handleOpenBorrowings() {
-        Stage currentStage = (Stage) btnBorrowings.getScene().getWindow();
-        SceneManagerController.changeScene(
-                currentStage,
-                "/org/library/system/view/BorrowingView.fxml",
-                "Gestion de Prestamos"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/BorrowingView.fxml"
+        );
+    }
+
+    @FXML
+    private void handlePendingRequests() {
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/PendingRequestsView.fxml"
         );
     }
 
     @FXML
     private void handleManageLibrarians() {
-        System.out.println("Abrir gestion de bibliotecarios (solo Bibliotecario)");
-        // Pendiente implementar
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/LibrarianView.fxml"
+        );
     }
 
     @FXML
     private void handleConsultCatalog() {
         CatalogController.setEditMode(false);
-        Stage currentStage = (Stage) btnConsultCatalog.getScene().getWindow();
-        SceneManagerController.changeScene(
-                currentStage,
-                "/org/library/system/view/CatalogView.fxml",
-                "Consultar Catalogo"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/CatalogView.fxml"
         );
     }
 
     @FXML
     private void handleMyBorrowings() {
-        System.out.println("Abrir prestamos del estudiante (solo consulta)");
-        // Pendiente implementar
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/MyLoansView.fxml"
+        );
     }
 
     @FXML
     private void handleLogout() {
-        Stage currentStage = (Stage) btnLogout.getScene().getWindow();
-        SceneManagerController.closeAndOpen(
-                currentStage,
-                "/org/library/system/view/LoginView.fxml",
-                "Iniciar Sesion"
+        SessionManager.getInstance().logout();
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/LoginView.fxml"
         );
     }
 }

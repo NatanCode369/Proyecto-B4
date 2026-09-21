@@ -5,78 +5,62 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import org.library.system.utils.Validations;
+import org.library.system.dao.UserDao;
+import org.library.system.model.User;
+import org.library.system.utils.PasswordUtil;
+import org.library.system.utils.SceneManager;
+import org.library.system.utils.SessionManager;
+
+import java.sql.SQLException;
+import java.util.Optional;
 
 public class LoginController {
 
-    @FXML
-    private TextField txtEmail;
+    @FXML private TextField txtEmail;
+    @FXML private PasswordField txtPassword;
+    @FXML private Button btnLogin;
+    @FXML private Hyperlink hlRegister;
 
-    @FXML
-    private PasswordField txtPassword;
+    private final UserDao userDao = new UserDao();
 
-    @FXML
-    private Button btnLogin;
-
-    @FXML
-    private Hyperlink hlRegister;
-
-    private final Validations validations;
-
-    public LoginController() {
-        this.validations = new Validations();
-    }
 
     @FXML
     public void initialize() {
-        System.out.println("LoginController initialized");
+        // Inicializacion del controlador
     }
 
     @FXML
     private void handleLogin() {
-        String userCode = txtEmail.getText();
+        String email = txtEmail.getText();
         String password = txtPassword.getText();
 
-        System.out.println("=== INICIANDO LOGIN ===");
+        if (email == null || email.isBlank()) return;
+        if (password == null || password.isBlank()) return;
 
-        // Validar que los campos no estén vacíos
-        if (validations.isEmpty(userCode)) {
-            System.out.println("Error: El código de usuario está vacío");
-            return;
+        try {
+            Optional<User> userOpt = userDao.loginByEmail(email.trim().toLowerCase());
+
+            if (userOpt.isEmpty()) return;
+
+            User user = userOpt.get();
+
+            if (!PasswordUtil.verify(password, user.getPassword_hash())) return;
+
+            SessionManager.getInstance().login(user, user.getPassword_hash());
+
+            SceneManager.getInstanciaSceneManager().goTo(
+                    "/org/library/system/view/DashboardView.fxml"
+            );
+
+        } catch (SQLException e) {
+            System.err.println("Error de base de datos: " + e.getMessage());
         }
-        if (validations.isEmpty(password)) {
-            System.out.println("Error: La contraseña está vacía");
-            return;
-        }
-
-        System.out.println("Usuario: " + userCode);
-        System.out.println("Contraseña ingresada");
-
-        // TODO: Aquí iría la validación con la base de datos
-        // Por ahora, simulamos un login ._.
-        System.out.println("Login exitoso (simulado)");
-
-        // Asignar rol por defecto para pruebas
-        String role = "Bibliotecario Jefe";
-        DashboardController.setRole(role);
-
-        // Redirigir al Dashboard
-        Stage currentStage = (Stage) btnLogin.getScene().getWindow();
-        SceneManagerController.closeAndOpen(
-                currentStage,
-                "/org/library/system/view/DashboardView.fxml",
-                "Panel Principal"
-        );
     }
 
     @FXML
     private void handleGoToRegister() {
-        Stage currentStage = (Stage) hlRegister.getScene().getWindow();
-        SceneManagerController.closeAndOpen(
-                currentStage,
-                "/org/library/system/view/RegisterView.fxml",
-                "Registro de Bibliotecario Jefe"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/RegisterView.fxml"
         );
     }
 }
