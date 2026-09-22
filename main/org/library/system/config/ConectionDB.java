@@ -7,10 +7,7 @@ import java.sql.SQLException;
 public class ConectionDB {
 
     private static final String URL =
-            "jdbc:mysql://" + Environment.LOCAL_HOST + "/" + Environment.DATA_BASE
-                    + "?useSSL=false"
-                    + "&serverTimezone=UTC"
-                    + "&allowPublicKeyRetrieval=true";
+            "jdbc:mysql://" + Environment.LOCAL_HOST + "/" + Environment.DATA_BASE";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
