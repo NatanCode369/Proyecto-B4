@@ -1168,3 +1168,44 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+-- ----------------------------------------------------------------
+-- GET DATA FOR THE PDF
+-- ----------------------------------------------------------------
+DELIMITER $$
+
+CREATE PROCEDURE sp_loan_invoice(IN p_loan_id INT)
+BEGIN
+
+    SELECT
+        l.loan_id,
+        l.loan_date,
+        l.due_date,
+        l.status,
+
+        u.user_code,
+        u.first_name,
+        u.last_name,
+        u.email,
+
+        b.isbn,
+        b.title,
+        b.author,
+
+        ld.quantity,
+        ld.returned_quantity
+
+    FROM loan l
+
+    INNER JOIN users u
+        ON l.student_id = u.user_id
+
+    INNER JOIN loan_detail ld
+        ON l.loan_id = ld.loan_id
+
+    INNER JOIN book b
+        ON ld.book_id = b.book_id
+
+    WHERE l.loan_id = p_loan_id;
+
+END $$
