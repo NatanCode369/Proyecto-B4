@@ -55,13 +55,31 @@ public class RegisterController {
             return;
         }
 
-        //terminar validaciones de contraseñas, fortaleza, etc.
+        if ((txtPassword.getText().equals(txtConfirmPassword.getText()))) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Las contraseñas no coinciden, asegúrese de que ambas contraseñas coinciden.");
+            return;
+        }
+
+        if (Validations.getInstancevalidations()
+                .validatePasswordStrength(txtConfirmPassword.getText(), 8)){
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    """
+                            La contraseña no cumple los requisitos mínimos:
+                            - 8 caracteres mínimo.
+                            - Al menos 1 letra mayúscula y 1 minúscula.
+                            - Al menos 1 caracter especial.
+                            - Al menos 1 número.
+                            """);
+            return;
+        }
 
         if (Validations.getInstancevalidations().validateEmail(
                 txtEmail.getText()
         )) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato no válido para el email.");
+            return;
         }
 
         // TODO: Aquí iría el guardado en la base de datos
