@@ -1,6 +1,6 @@
 package org.library.system.utils;
 
-import org.library.system.enums.Role;
+import org.library.system.model.enums.Role;
 import org.library.system.model.User;
 
 public class SessionManager {

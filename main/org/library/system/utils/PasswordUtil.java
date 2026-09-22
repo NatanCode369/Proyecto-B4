@@ -22,9 +22,3 @@ public class PasswordUtil {
             throw new RuntimeException("Error al hashear contrasena", e);
         }
     }
-
-    public static boolean verify(String plainPassword, String hashedPassword) {
-        if (plainPassword == null || hashedPassword == null) return false;
-        return hash(plainPassword).equals(hashedPassword);
-    }
-}
