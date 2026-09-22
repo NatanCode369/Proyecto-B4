@@ -9,14 +9,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogController">
+<VBox prefHeight="750.0" prefWidth="1150.0" spacing="10.0" styleClass="root" stylesheets="@../styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
         <Label styleClass="label-title" text="Catalogo de Libros" />
 
-        <!-- Barra de busqueda (siempre visible) -->
         <HBox spacing="10.0">
             <children>
                 <TextField fx:id="txtSearchTitle" promptText="Buscar por titulo" prefWidth="300" styleClass="text-field" />
@@ -26,10 +25,9 @@
             </children>
         </HBox>
 
-        <!-- Seccion de edicion (solo bibliotecarios) -->
         <VBox fx:id="editSection" spacing="10.0">
             <children>
-                <Label text="Registrar nuevo libro" />
+                <Label text="Datos del Libro" />
                 <HBox spacing="10.0">
                     <children>
                         <TextField fx:id="txtIsbn" promptText="ISBN" prefWidth="150" styleClass="text-field" />
@@ -47,25 +45,27 @@
                 <HBox spacing="10.0">
                     <children>
                         <Button fx:id="btnAdd" onAction="#handleAddBook" text="Agregar" />
-                        <Button fx:id="btnClear" onAction="#handleClearFields" styleClass="button-danger" text="Limpiar" />
+                        <Button fx:id="btnUpdate" onAction="#handleUpdateBook" styleClass="button-secondary" text="Actualizar" />
+                        <Button fx:id="btnDelete" onAction="#handleDeleteBook" styleClass="button-danger" text="Eliminar" />
+                        <Button fx:id="btnClear" onAction="#handleClearFields" styleClass="button-secondary" text="Limpiar campos" />
                     </children>
                 </HBox>
             </children>
         </VBox>
 
-        <!-- Tabla de libros -->
-        <TableView fx:id="tableBooks" prefHeight="300.0">
+        <TableView fx:id="tableBooks" prefHeight="350.0">
             <columns>
+                <TableColumn fx:id="colBookId" text="ID" prefWidth="60" />
                 <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150" />
                 <TableColumn fx:id="colTitle" text="Titulo" prefWidth="200" />
                 <TableColumn fx:id="colAuthor" text="Autor" prefWidth="150" />
                 <TableColumn fx:id="colPublisher" text="Editorial" prefWidth="150" />
                 <TableColumn fx:id="colYear" text="Anio" prefWidth="80" />
-                <TableColumn fx:id="colCopies" text="Copias" prefWidth="80" />
+                <TableColumn fx:id="colTotalStock" text="Total" prefWidth="80" />
+                <TableColumn fx:id="colAvailableStock" text="Disponibles" prefWidth="100" />
             </columns>
         </TableView>
 
-        <!-- Botones de accion -->
         <HBox spacing="10.0">
             <children>
                 <Button fx:id="btnNewBorrowing" onAction="#handleNewBorrowing" text="Nuevo Prestamo" />

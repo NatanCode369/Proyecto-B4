@@ -4,102 +4,85 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import org.library.system.utils.AlertUtils;
-import org.library.system.utils.AppStatus;
+import org.library.system.dao.UserDao;
+import org.library.system.enums.Role;
+import org.library.system.model.User;
+import org.library.system.service.EmailRoleResolver;
+import org.library.system.utils.PasswordUtil;
+import org.library.system.utils.SceneManager;
 import org.library.system.utils.Validations;
+
+import java.sql.SQLException;
 
 public class RegisterController {
 
-    @FXML
-    private TextField txtName;
+    @FXML private TextField txtName;
+    @FXML private TextField txtEmail;
+    @FXML private PasswordField txtPassword;
+    @FXML private PasswordField txtConfirmPassword;
+    @FXML private Button btnRegister;
+    @FXML private Button btnCancel;
 
-    @FXML
-    private TextField txtEmail;
-
-    @FXML
-    private PasswordField txtPassword;
-
-    @FXML
-    private PasswordField txtConfirmPassword;
-
-    @FXML
-    private Button btnRegister;
-
-    @FXML
-    private Button btnCancel;
-
-    public RegisterController() {}
+    private final UserDao userDao = new UserDao();
+    private final Validations validations = new Validations();
 
     @FXML
     public void initialize() {
-
+        // Inicializacion del controlador
     }
 
     @FXML
     private void handleRegister() {
-        if ((txtName.getText().isEmpty() || txtName.getText().isBlank()) ||
-                (txtEmail.getText().isEmpty() || txtEmail.getText().isBlank()) ||
-                (txtPassword.getText().isEmpty() || txtPassword.getText().isBlank()) ||
-                (txtConfirmPassword.getText().isEmpty() || txtConfirmPassword.getText().isBlank()))
-        {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Campos obligatorios vacíos");
-            return;
+        String fullName = txtName.getText();
+        String email = txtEmail.getText();
+        String password = txtPassword.getText();
+        String confirm = txtConfirmPassword.getText();
+
+        if (validations.isEmpty(fullName)) return;
+        if (validations.isEmpty(email)) return;
+        if (validations.isEmpty(password)) return;
+        if (validations.isEmpty(confirm)) return;
+        if (!validations.validatePasswordMatch(password, confirm)) return;
+        if (!validations.validateEmail(email)) return;
+
+        Role role = EmailRoleResolver.resolve(email);
+        if (role == null) return;
+
+        try {
+            String[] parts = fullName.trim().split(" ", 2);
+            String firstName = parts[0];
+            String lastName = parts.length > 1 ? parts[1] : "";
+
+            String emailWithoutPrefix = email.substring(email.indexOf('.') + 1);
+            String userCode = emailWithoutPrefix.split("@")[0].toUpperCase();
+
+            if (userDao.findByCode(userCode).isPresent()) return;
+            if (userDao.findByEmail(email.trim()).isPresent()) return;
+
+            User user = new User();
+            user.setUser_code(userCode);
+            user.setFirst_name(firstName);
+            user.setLast_name(lastName);
+            user.setEmail(email.trim().toLowerCase());
+            user.setPassword_hash(PasswordUtil.hash(password));
+            user.setUser_role(role);
+            user.setActive(true);
+
+            userDao.create(user);
+
+            SceneManager.getInstanciaSceneManager().goTo(
+                    "/org/library/system/view/LoginView.fxml"
+            );
+
+        } catch (SQLException e) {
+            System.err.println("Error al registrar: " + e.getMessage());
         }
-
-        if (txtPassword.getText().equals(txtConfirmPassword.getText()))
-        {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Las contraseñas ingresadas no son idénticas");
-            return;
-        }
-
-        if ((txtPassword.getText().equals(txtConfirmPassword.getText()))) {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Las contraseñas no coinciden, asegúrese de que ambas contraseñas coinciden.");
-            return;
-        }
-
-        if (Validations.getInstancevalidations()
-                .validatePasswordStrength(txtConfirmPassword.getText(), 8)){
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    """
-                            La contraseña no cumple los requisitos mínimos:
-                            - 8 caracteres mínimo.
-                            - Al menos 1 letra mayúscula y 1 minúscula.
-                            - Al menos 1 caracter especial.
-                            - Al menos 1 número.
-                            """);
-            return;
-        }
-
-        if (Validations.getInstancevalidations().validateEmail(
-                txtEmail.getText()
-        )) {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Formato no válido para el email.");
-            return;
-        }
-
-        // TODO: Aquí iría el guardado en la base de datos
-
-        // Redirigir al Login
-        Stage currentStage = (Stage) btnRegister.getScene().getWindow();
-        SceneManagerController.closeAndOpen(
-                currentStage,
-                "/org/library/system/view/LoginView.fxml",
-                "Iniciar Sesion"
-        );
     }
 
     @FXML
     private void handleCancel() {
-        Stage currentStage = (Stage) btnCancel.getScene().getWindow();
-        SceneManagerController.closeAndOpen(
-                currentStage,
-                "/org/library/system/view/LoginView.fxml",
-                "Iniciar Sesion"
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/LoginView.fxml"
         );
     }
 }

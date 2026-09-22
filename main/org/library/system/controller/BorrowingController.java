@@ -81,11 +81,9 @@ public class BorrowingController {
 
     @FXML
     private void handleSearchBook() {
-        String isbn = txtIsbn.getText();
-        String title = txtBookTitle.getText();
-
-        if (validations.isEmpty(isbn) && validations.isEmpty(title)) {
-            System.out.println("Error: Ingrese ISBN o título para buscar");
+        if (txtIsbn.getText().isEmpty() && txtBookTitle.getText().isEmpty()) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Ingrese el ISBN o el título del libro que desea buscar.");
             return;
         } else {
             //Consulta a la DB para buscar el ISBN o el título del libro y demás procesos.
@@ -94,29 +92,73 @@ public class BorrowingController {
 
     @FXML
     private void handleGenerateBorrowing() {
-        System.out.println("[BORROWING] Iniciando generacion de prestamo");
-
         // Validar que se haya seleccionado una fecha
         if (dpDueDate.getValue() == null) {
-            System.out.println("[BORROWING] ERROR: Seleccione una fecha limite");
-            return;
-        }
-        if (lblStudentName.getText().equals("Nombre: -")) {
-            System.out.println("[BORROWING] ERROR: Busque un estudiante primero");
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Debe agregar una fecha límite.");
             return;
         }
-
-        // Validar que se haya seleccionado un ejemplar
-        if (tableCopies.getSelectionModel().isEmpty()) {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Debe seleccionar un ejemplar para generar la solicitud.");
+        if (selectedBook.getAvailable_stock() <= 0) {
+            showAlert(Alert.AlertType.WARNING, "Sin stock",
+                    "No hay ejemplares disponibles de este libro.");
             return;
         }
 
-        //Generación del préstamo
-        // Guardado en la base de datos
+        User librarian = SessionManager.getInstance().getCurrentUser();
+        if (librarian == null) return;
+
+        try {
+            // 1. Crear solicitud aprobada
+            LoanApplication request = new LoanApplication();
+            request.setStudent_id(selectedStudent.getUser_id());
+            request.setStatus(RequestStatus.APPROVED);
+            request.setLibrarian_id(librarian.getUser_id());
+            request.setResponse_date(LocalDate.now());
+
+            int requestId = loanRequestDao.create(request);
+
+            // 2. Detalle de la solicitud
+            RequestDetails requestDetail = new RequestDetails();
+            requestDetail.setRequest_id(requestId);
+            requestDetail.setBook_id(selectedBook.getBook_id());
+            requestDetail.setQuantity(1);
+            loanRequestDetailDao.create(requestDetail);
+
+            // 3. Crear el prestamo
+            Loan loan = new Loan();
+            loan.setRequest_id(requestId);
+            loan.setStudent_id(selectedStudent.getUser_id());
+            loan.setLibrarian_id(librarian.getUser_id());
+            loan.setDue_date(dpDueDate.getValue());
+            loan.setStatus(LoanStatus.ACTIVE);
+
+            int loanId = loanDao.create(loan);
+
+            // 4. Detalle del prestamo
+            LoanDetails loanDetail = new LoanDetails();
+            loanDetail.setLoan_id(loanId);
+            loanDetail.setBook_id(selectedBook.getBook_id());
+            loanDetail.setQuantity(1);
+            loanDetail.setReturned_quantity(0);
+            loanDetailDao.create(loanDetail);
+
+            // 5. Bajar stock
+            selectedBook.setAvailable_stock(selectedBook.getAvailable_stock() - 1);
+            bookDao.update(selectedBook);
+
+            showAlert(Alert.AlertType.INFORMATION, "Prestamo creado",
+                    "Prestamo #" + loanId + " registrado exitosamente.\n" +
+                            "Estudiante: " + selectedStudent.getFirst_name() + "\n" +
+                            "Libro: " + selectedBook.getTitle() + "\n" +
+                            "Fecha limite: " + dpDueDate.getValue());
+
+            bookList.setAll(bookDao.search(""));
+            clearForm();
+
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Error al generar prestamo",
+                    e.getMessage());
+        }
     }
 
     @FXML

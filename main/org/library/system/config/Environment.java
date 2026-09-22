@@ -6,3 +6,4 @@ public class Environment {
     protected static final String DATA_BASE ="library_borrowing_system_in4am";
     protected static final String LOCAL_HOST = "localhost:3306";
 }
+
