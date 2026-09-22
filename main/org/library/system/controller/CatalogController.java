@@ -126,12 +126,6 @@ public class CatalogController {
     }
 
     @FXML
-    private void handleClearFields() {
-        clearFields();
-        System.out.println("Campos limpiados");
-    }
-
-    @FXML
     private void handleNewBorrowing() {
         if (!editMode) {
             AlertUtils.instanceAlert().show(AppStatus.FORBIDDEN, "No tiene permisos para registrar préstamos.");

@@ -27,7 +27,7 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        System.out.println("LoginController initialized");
+        //Carga de todos los elementos necesarios.
     }
 
     @FXML
@@ -40,8 +40,6 @@ public class LoginController {
         }
 
         // TODO: Aquí iría la validación con la base de datos
-
-
 
         // Redirigir al Dashboard
         Stage currentStage = (Stage) btnLogin.getScene().getWindow();

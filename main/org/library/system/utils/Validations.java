@@ -45,16 +45,6 @@ public class Validations {
     }
 
     /**
-     * Valida que dos contraseñas coincidan.
-     */
-    public boolean validatePasswordMatch(String password, String confirmPassword) {
-        if (password == null || confirmPassword == null) {
-            return false;
-        }
-        return password.equals(confirmPassword);
-    }
-
-    /**
      * Valida la fortaleza de una contraseña.
      */
     public boolean validatePasswordStrength(String password, int minLength) {

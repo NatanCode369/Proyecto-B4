@@ -117,7 +117,6 @@ public class DashboardController {
 
     @FXML
     private void handleMyBorrowings() {
-        System.out.println("Abrir prestamos del estudiante (solo consulta)");
         // Pendiente implementar
     }
 
