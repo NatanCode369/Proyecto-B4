@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="15.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.BorrowingController">
+<VBox prefHeight="700.0" prefWidth="1000.0" spacing="12.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.BorrowingController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -20,52 +20,45 @@
         <Label text="Datos del Estudiante" />
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtStudentId" promptText="Carnet" prefWidth="200" styleClass="text-field" />
-                <Button fx:id="btnSearchStudent" onAction="#handleSearchStudent" text="Buscar" />
+                <TextField fx:id="txtStudentId" promptText="Carnet del estudiante" prefWidth="250" styleClass="text-field" />
+                <Button fx:id="btnSearchStudent" onAction="#handleSearchStudent" text="Buscar Estudiante" />
             </children>
         </HBox>
         <Label fx:id="lblStudentName" text="Nombre: -" />
         <Label fx:id="lblStudentEmail" text="Correo: -" />
 
-        <Label text="Datos del Libro / Ejemplar" />
+        <Label text="Datos del Libro" />
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtIsbn" promptText="ISBN" prefWidth="150" styleClass="text-field" />
-                <TextField fx:id="txtBookTitle" promptText="Titulo" prefWidth="200" styleClass="text-field" />
-                <Button fx:id="btnSearchBook" onAction="#handleSearchBook" text="Buscar" />
+                <TextField fx:id="txtIsbn" promptText="ISBN" prefWidth="180" styleClass="text-field" />
+                <TextField fx:id="txtBookTitle" promptText="Titulo" prefWidth="250" styleClass="text-field" />
+                <Button fx:id="btnSearchBook" onAction="#handleSearchBook" text="Buscar Libro" />
             </children>
         </HBox>
 
-        <TableView fx:id="tableCopies" prefHeight="200.0">
+        <TableView fx:id="tableBooks" prefHeight="250.0">
             <columns>
-                <TableColumn fx:id="colBarcode" text="Codigo de Barras" prefWidth="150" />
-                <TableColumn fx:id="colStatus" text="Estado" prefWidth="100" />
-                <TableColumn fx:id="colSelect" text="Seleccionar" prefWidth="100" />
+                <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150" />
+                <TableColumn fx:id="colTitle" text="Titulo" prefWidth="250" />
+                <TableColumn fx:id="colAuthor" text="Autor" prefWidth="180" />
+                <TableColumn fx:id="colAvailable" text="Disponibles" prefWidth="100" />
             </columns>
         </TableView>
 
-        <Label text="Fechas" />
+        <Label text="Fecha Limite de Devolucion" />
         <HBox spacing="20.0">
             <children>
-                <VBox spacing="5.0">
-                    <children>
-                        <Label text="Fecha de Prestamo:" />
-                        <Label fx:id="lblBorrowDate" text="Fecha actual" />
-                    </children>
-                </VBox>
-                <VBox spacing="5.0">
-                    <children>
-                        <Label text="Fecha Limite (Devolucion):" />
-                        <DatePicker fx:id="dpDueDate" promptText="Seleccione fecha" />
-                    </children>
-                </VBox>
+                <Label text="Fecha de Prestamo:" />
+                <Label fx:id="lblBorrowDate" text="-" />
+                <Label text="     Fecha Limite:" />
+                <DatePicker fx:id="dpDueDate" promptText="Seleccione fecha" />
             </children>
         </HBox>
 
         <HBox spacing="10.0">
             <children>
                 <Button fx:id="btnGenerateBorrowing" onAction="#handleGenerateBorrowing" text="Generar Prestamo" />
-                <Button fx:id="btnPrintReceipt" onAction="#handlePrintReceipt" text="Imprimir Comprobante" />
+                <Button fx:id="btnPrintReceipt" onAction="#handlePrintReceipt" styleClass="button-secondary" text="Imprimir Comprobante" />
                 <Button fx:id="btnBack" onAction="#handleBack" styleClass="button-back" text="Regresar" />
             </children>
         </HBox>

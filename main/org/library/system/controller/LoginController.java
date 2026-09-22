@@ -23,6 +23,7 @@ public class LoginController {
 
     private final UserDao userDao = new UserDao();
 
+
     @FXML
     public void initialize() {
         // Inicializacion del controlador

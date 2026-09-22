@@ -14,6 +14,7 @@ public class DashboardController {
     @FXML private Label lblRole;
     @FXML private Button btnCatalog;
     @FXML private Button btnBorrowings;
+    @FXML private Button btnPendingRequests;
     @FXML private Button btnManageLibrarians;
     @FXML private Button btnConsultCatalog;
     @FXML private Button btnMyBorrowings;
@@ -37,10 +38,14 @@ public class DashboardController {
         hideAll();
 
         switch (user.getUser_role()) {
-            case MANAGER -> show(btnManageLibrarians);
+            case MANAGER -> {
+                show(btnManageLibrarians);
+                show(btnPendingRequests);
+            }
             case LIBRARIAN -> {
                 show(btnCatalog);
                 show(btnBorrowings);
+                show(btnPendingRequests);
             }
             case STUDENT -> {
                 show(btnConsultCatalog);
@@ -58,7 +63,8 @@ public class DashboardController {
     }
 
     private void hideAll() {
-        for (Button b : new Button[]{btnCatalog, btnBorrowings,
+        for (Button b : new Button[]{
+                btnCatalog, btnBorrowings, btnPendingRequests,
                 btnManageLibrarians, btnConsultCatalog, btnMyBorrowings}) {
             b.setVisible(false);
             b.setManaged(false);
@@ -86,6 +92,13 @@ public class DashboardController {
     }
 
     @FXML
+    private void handlePendingRequests() {
+        SceneManager.getInstanciaSceneManager().goTo(
+                "/org/library/system/view/PendingRequestsView.fxml"
+        );
+    }
+
+    @FXML
     private void handleManageLibrarians() {
         SceneManager.getInstanciaSceneManager().goTo(
                 "/org/library/system/view/LibrarianView.fxml"
@@ -103,7 +116,7 @@ public class DashboardController {
     @FXML
     private void handleMyBorrowings() {
         SceneManager.getInstanciaSceneManager().goTo(
-                "/org/library/system/view/BorrowingView.fxml"
+                "/org/library/system/view/MyLoansView.fxml"
         );
     }
 

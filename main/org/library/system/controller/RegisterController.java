@@ -7,8 +7,10 @@ import javafx.scene.control.TextField;
 import org.library.system.dao.UserDao;
 import org.library.system.enums.Role;
 import org.library.system.model.User;
+import org.library.system.service.EmailRoleResolver;
 import org.library.system.utils.PasswordUtil;
 import org.library.system.utils.SceneManager;
+import org.library.system.utils.Validations;
 
 import java.sql.SQLException;
 
@@ -22,6 +24,7 @@ public class RegisterController {
     @FXML private Button btnCancel;
 
     private final UserDao userDao = new UserDao();
+    private final Validations validations = new Validations();
 
     @FXML
     public void initialize() {
@@ -35,17 +38,23 @@ public class RegisterController {
         String password = txtPassword.getText();
         String confirm = txtConfirmPassword.getText();
 
-        if (fullName == null || fullName.isBlank()) return;
-        if (email == null || email.isBlank()) return;
-        if (password == null || password.isBlank()) return;
-        if (confirm == null || confirm.isBlank()) return;
-        if (!password.equals(confirm)) return;
+        if (validations.isEmpty(fullName)) return;
+        if (validations.isEmpty(email)) return;
+        if (validations.isEmpty(password)) return;
+        if (validations.isEmpty(confirm)) return;
+        if (!validations.validatePasswordMatch(password, confirm)) return;
+        if (!validations.validateEmail(email)) return;
+
+        Role role = EmailRoleResolver.resolve(email);
+        if (role == null) return;
 
         try {
             String[] parts = fullName.trim().split(" ", 2);
             String firstName = parts[0];
             String lastName = parts.length > 1 ? parts[1] : "";
-            String userCode = email.split("@")[0].toUpperCase();
+
+            String emailWithoutPrefix = email.substring(email.indexOf('.') + 1);
+            String userCode = emailWithoutPrefix.split("@")[0].toUpperCase();
 
             if (userDao.findByCode(userCode).isPresent()) return;
             if (userDao.findByEmail(email.trim()).isPresent()) return;
@@ -56,7 +65,7 @@ public class RegisterController {
             user.setLast_name(lastName);
             user.setEmail(email.trim().toLowerCase());
             user.setPassword_hash(PasswordUtil.hash(password));
-            user.setUser_role(Role.MANAGER);
+            user.setUser_role(role);
             user.setActive(true);
 
             userDao.create(user);
@@ -66,7 +75,7 @@ public class RegisterController {
             );
 
         } catch (SQLException e) {
-            System.err.println("Error de base de datos: " + e.getMessage());
+            System.err.println("Error al registrar: " + e.getMessage());
         }
     }
 

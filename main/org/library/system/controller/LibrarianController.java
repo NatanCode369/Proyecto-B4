@@ -20,7 +20,6 @@ import java.util.List;
 public class LibrarianController {
 
     @FXML private TextField txtSearch;
-
     @FXML private TextField txtUserCode;
     @FXML private TextField txtFirstName;
     @FXML private TextField txtLastName;
@@ -53,7 +52,6 @@ public class LibrarianController {
         );
         loadLibrarians();
     }
-    
 
     private void configureTable() {
         colUserId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getUser_id()).asObject());
@@ -100,15 +98,16 @@ public class LibrarianController {
 
         try {
             String userCode = txtUserCode.getText().trim();
+            String email = txtEmail.getText().trim().toLowerCase();
 
             if (userDao.findByCode(userCode).isPresent()) return;
-            if (userDao.findByEmail(txtEmail.getText().trim()).isPresent()) return;
+            if (userDao.findByEmail(email).isPresent()) return;
 
             User user = new User();
             user.setUser_code(userCode);
             user.setFirst_name(txtFirstName.getText().trim());
             user.setLast_name(txtLastName.getText().trim());
-            user.setEmail(txtEmail.getText().trim());
+            user.setEmail(email);
             user.setPassword_hash(PasswordUtil.hash(txtPassword.getText()));
             user.setUser_role(Role.LIBRARIAN);
             user.setActive(chkActive.isSelected());
@@ -132,7 +131,7 @@ public class LibrarianController {
             selected.setUser_code(txtUserCode.getText().trim());
             selected.setFirst_name(txtFirstName.getText().trim());
             selected.setLast_name(txtLastName.getText().trim());
-            selected.setEmail(txtEmail.getText().trim());
+            selected.setEmail(txtEmail.getText().trim().toLowerCase());
             if (!txtPassword.getText().isBlank()) {
                 selected.setPassword_hash(PasswordUtil.hash(txtPassword.getText()));
             }
