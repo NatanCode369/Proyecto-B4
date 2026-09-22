@@ -19,7 +19,6 @@ public enum AppStatus {
     NOT_FOUND(404, Severity.WARNING, "No encontrado", "No existe el recurso solicitado."),
     CONFLICT(409, Severity.WARNING, "Conflicto de datos", "El registro ya existe o no puede modificarse."),
     UNPROCESSABLE(422, Severity.WARNING, "Regla de negocio", "La operación no cumple las reglas del sistema."),
-    CONFIRMATION(402, Severity.CONFIRMATION, "Confirmación de solicitud", "¿Desea continuar con la solicitud?"),
 
     DATABASE_UNAVAILABLE(503, Severity.ERROR, "Base de datos no disponible",
             "No fue posible conectarse con la base de datos."),

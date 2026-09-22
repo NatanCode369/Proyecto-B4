@@ -1,155 +1,101 @@
 package org.library.system.controller;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import org.library.system.dao.*;
-import org.library.system.enums.LoanStatus;
-import org.library.system.enums.RequestStatus;
-import org.library.system.model.*;
-import org.library.system.utils.SceneManager;
-import org.library.system.utils.SessionManager;
+import javafx.stage.Stage;
+import org.library.system.model.Book;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 
 public class BorrowingController {
 
-    @FXML private TextField txtStudentId;
-    @FXML private TextField txtIsbn;
-    @FXML private TextField txtBookTitle;
-    @FXML private Label lblStudentName;
-    @FXML private Label lblStudentEmail;
-    @FXML private Label lblBorrowDate;
-    @FXML private DatePicker dpDueDate;
-    @FXML private TableView<Book> tableBooks;
-    @FXML private TableColumn<Book, String> colIsbn;
-    @FXML private TableColumn<Book, String> colTitle;
-    @FXML private TableColumn<Book, String> colAuthor;
-    @FXML private TableColumn<Book, Integer> colAvailable;
-    @FXML private Button btnSearchStudent;
-    @FXML private Button btnSearchBook;
-    @FXML private Button btnGenerateBorrowing;
-    @FXML private Button btnPrintReceipt;
-    @FXML private Button btnBack;
+    @FXML
+    private TextField txtStudentId;
 
-    private final UserDao userDao = new UserDao();
-    private final BookDao bookDao = new BookDao();
-    private final LoanDao loanDao = new LoanDao();
-    private final LoanRequestDao loanRequestDao = new LoanRequestDao();
-    private final LoanDetailDao loanDetailDao = new LoanDetailDao();
-    private final LoanRequestDetailDao loanRequestDetailDao = new LoanRequestDetailDao();
+    @FXML
+    private TextField txtIsbn;
 
-    private final ObservableList<Book> bookList = FXCollections.observableArrayList();
+    @FXML
+    private TextField txtBookTitle;
 
-    private User selectedStudent;
-    private Book selectedBook;
+    @FXML
+    private Label lblStudentName;
+
+    @FXML
+    private Label lblStudentEmail;
+
+    @FXML
+    private Label lblBorrowDate;
+
+    @FXML
+    private DatePicker dpDueDate;
+
+    @FXML
+    private TableView<Book> tableCopies;
+
+    @FXML
+    private TableColumn<Book, String> colBarcode;
+
+    @FXML
+    private TableColumn<Book, String> colStatus;
+
+    @FXML
+    private TableColumn<Book, Void> colSelect;
+
+    @FXML
+    private Button btnSearchStudent;
+
+    @FXML
+    private Button btnSearchBook;
+
+    @FXML
+    private Button btnGenerateBorrowing;
+
+    @FXML
+    private Button btnPrintReceipt;
+
+    @FXML
+    private Button btnBack;
+
+    public BorrowingController() {
+    }
 
     @FXML
     public void initialize() {
-        lblBorrowDate.setText(LocalDate.now()
-                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        lblBorrowDate.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        colIsbn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getIsbn()));
-        colTitle.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle()));
-        colAuthor.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAuthor()));
-        colAvailable.setCellValueFactory(c ->
-                new SimpleIntegerProperty(c.getValue().getAvailable_stock()).asObject());
-
-        tableBooks.setItems(bookList);
-
-        tableBooks.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldVal, newVal) -> {
-                    if (newVal != null) {
-                        selectedBook = newVal;
-                    }
-                }
-        );
+        //refactorizar el método initialize
     }
 
     @FXML
     private void handleSearchStudent() {
-        String carnet = txtStudentId.getText();
-        if (carnet == null || carnet.isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Sin datos",
-                    "Ingrese el carnet del estudiante.");
-            return;
-        }
-
-        try {
-            Optional<User> userOpt = userDao.findByCode(carnet.trim().toUpperCase());
-
-            if (userOpt.isEmpty()) {
-                selectedStudent = null;
-                lblStudentName.setText("Nombre: -");
-                lblStudentEmail.setText("Correo: -");
-                showAlert(Alert.AlertType.WARNING, "No encontrado",
-                        "Estudiante no encontrado con carnet: " + carnet);
-                return;
-            }
-
-            selectedStudent = userOpt.get();
-            lblStudentName.setText("Nombre: " + selectedStudent.getFirst_name()
-                    + " " + selectedStudent.getLast_name());
-            lblStudentEmail.setText("Correo: " + selectedStudent.getEmail());
-
-            showAlert(Alert.AlertType.INFORMATION, "Estudiante encontrado",
-                    "Estudiante: " + selectedStudent.getFirst_name()
-                            + " " + selectedStudent.getLast_name());
-
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error de base de datos",
-                    e.getMessage());
+        if (txtStudentId.getText().isEmpty()) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT, "Ingrese el ID de un estudiante.");
+        } else {
+            //Consulta a la DB para buscar al estudiante y demás procesos requeridos.
         }
     }
 
     @FXML
     private void handleSearchBook() {
-        String isbn = txtIsbn.getText();
-        String title = txtBookTitle.getText();
-
-        String filter = "";
-        if (isbn != null && !isbn.isBlank()) filter = isbn.trim();
-        else if (title != null && !title.isBlank()) filter = title.trim();
-
-        try {
-            List<Book> results = bookDao.search(filter);
-            bookList.setAll(results);
-
-            if (results.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Sin resultados",
-                        "No se encontraron libros con ese criterio.");
-            } else {
-                showAlert(Alert.AlertType.INFORMATION, "Resultados",
-                        "Se encontraron " + results.size() + " libro(s).");
-            }
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error de base de datos",
-                    e.getMessage());
+        if (txtIsbn.getText().isEmpty() && txtBookTitle.getText().isEmpty()) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Ingrese el ISBN o el título del libro que desea buscar.");
+            return;
+        } else {
+            //Consulta a la DB para buscar el ISBN o el título del libro y demás procesos.
         }
     }
 
     @FXML
     private void handleGenerateBorrowing() {
-        if (selectedStudent == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin estudiante",
-                    "Busque un estudiante primero.");
-            return;
-        }
-        if (selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin libro",
-                    "Seleccione un libro de la tabla.");
-            return;
-        }
+        // Validar que se haya seleccionado una fecha
         if (dpDueDate.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin fecha",
-                    "Seleccione la fecha limite de devolucion.");
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Debe agregar una fecha límite.");
             return;
         }
         if (selectedBook.getAvailable_stock() <= 0) {
@@ -217,48 +163,21 @@ public class BorrowingController {
 
     @FXML
     private void handlePrintReceipt() {
-        if (selectedStudent == null || selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin datos",
-                    "Genere un prestamo primero.");
-            return;
-        }
-
-        String receipt = "COMPROBANTE DE PRESTAMO\n\n" +
-                "Estudiante: " + selectedStudent.getFirst_name() + " "
-                + selectedStudent.getLast_name() + "\n" +
-                "Carnet: " + selectedStudent.getUser_code() + "\n" +
-                "Libro: " + selectedBook.getTitle() + "\n" +
-                "ISBN: " + selectedBook.getIsbn() + "\n" +
-                "Fecha prestamo: " + LocalDate.now() + "\n" +
-                "Fecha limite: " + dpDueDate.getValue();
-
-        showAlert(Alert.AlertType.INFORMATION, "Comprobante", receipt);
+        //Acá debe ir lo de JasperReports y la exportación a pdf.
     }
 
     @FXML
     private void handleBack() {
-        SceneManager.getInstanciaSceneManager().goTo(
-                "/org/library/system/view/DashboardView.fxml"
+        Stage currentStage = (Stage) btnBack.getScene().getWindow();
+        SceneManagerController.changeScene(
+                currentStage,
+                "/org/library/system/view/DashboardView.fxml",
+                "Panel Principal"
         );
     }
 
-    private void clearForm() {
-        txtStudentId.clear();
-        txtIsbn.clear();
-        txtBookTitle.clear();
-        lblStudentName.setText("Nombre: -");
-        lblStudentEmail.setText("Correo: -");
-        dpDueDate.setValue(null);
-        selectedStudent = null;
-        selectedBook = null;
-        bookList.clear();
+    private void loadTestCopies() {
+        tableCopies.getItems().clear();
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }
