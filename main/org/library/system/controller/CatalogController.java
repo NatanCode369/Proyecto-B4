@@ -137,8 +137,11 @@ public class CatalogController {
     @FXML
     private void handleSearch() {
         String filter = "";
-        if (!txtTitle.getText().isEmpty()) filter = txtTitle.getText().trim();
-        else if (!txtIsbn.getText().isEmpty()) filter = txtIsbn.getText().trim();
+        if (!txtSearchTitle.getText().isEmpty()) {
+            filter = txtSearchTitle.getText().trim();
+        } else if (!txtSearchIsbn.getText().isEmpty()) {
+            filter = txtSearchIsbn.getText().trim();
+        }
 
         try {
             List<Book> results = bookDao.search(filter);
@@ -163,44 +166,50 @@ public class CatalogController {
 
     @FXML
     private void handleAddBook() {
-        if (!editMode)
+        if (!editMode) {
             AlertUtils.instanceAlert().show(AppStatus.FORBIDDEN,
                     "No tiene permiso para añadir libros.");
+            return;
+        }
 
-        if ((txtTitle.getText().isEmpty() || txtTitle.getText().isBlank()) ||
-                (txtIsbn.getText().isEmpty() || txtIsbn.getText().isBlank()) ||
-                (txtAuthor.getText().isEmpty() || txtAuthor.getText().isBlank()) ||
-                (txtPublisher.getText().isEmpty() || txtPublisher.getText().isBlank()) ||
-                (txtYear.getText().isEmpty() || txtYear.getText().isBlank()) ||
-                txtCopies.getText().isEmpty() || txtCopies.getText().isBlank()) {
+        if (txtTitle.getText().isEmpty() || txtTitle.getText().isBlank()
+                || txtIsbn.getText().isEmpty() || txtIsbn.getText().isBlank()
+                || txtAuthor.getText().isEmpty() || txtAuthor.getText().isBlank()
+                || txtPublisher.getText().isEmpty() || txtPublisher.getText().isBlank()
+                || txtYear.getText().isEmpty() || txtYear.getText().isBlank()
+                || txtCopies.getText().isEmpty() || txtCopies.getText().isBlank()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Campos obligatorios vacíos");
             return;
         }
 
-        if (Validations.getInstancevalidations().validateYear(txtYear.getText()) &&
-                (Validations.getInstancevalidations().validatePositiveNumber(Integer.parseInt(txtYear.getText())))) {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT, "El formato del año no es correcto.");
-            return;
-        }
-
-        if (Validations.getInstancevalidations().validateIsbn(txtIsbn.getText())) {
+        if (!validations.validateIsbn(txtIsbn.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato incorrecto del ISBN.");
             return;
         }
 
-        if (Validations.getInstancevalidations().validateInteger(txtIsbn.getText()) &&
-                (Validations.getInstancevalidations().validateInteger(txtCopies.getText())) &&
-                (Validations.getInstancevalidations().validateInteger(txtYear.getText()))) {
+        if (!validations.validateInteger(txtYear.getText())
+                || !validations.validateInteger(txtCopies.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Los campos númericos contienen letras o no son enteros");
+                    "Los campos numéricos contienen letras o no son enteros.");
+            return;
+        }
+
+        if (!validations.validateYear(txtYear.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "El formato del año no es correcto.");
+            return;
+        }
+
+        if (!validations.validatePositiveNumber(Integer.parseInt(txtCopies.getText()))) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "La cantidad de copias debe ser mayor a cero.");
             return;
         }
 
         try {
             Book book = getBook();
-
             bookDao.create(book);
 
             AlertUtils.instanceAlert().show(AppStatus.CREATED,

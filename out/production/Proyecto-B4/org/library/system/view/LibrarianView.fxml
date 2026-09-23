@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="1100.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/23.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.LibrarianController">
+<VBox prefHeight="700.0" prefWidth="1100.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.LibrarianController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -20,9 +20,9 @@
         <!-- BUSQUEDA -->
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtSearch" promptText="Buscar por codigo, nombre o correo" prefWidth="400" styleClass="text-field" />
-                <Button fx:id="btnSearch" onAction="#handleSearch" text="Buscar" />
-                <Button fx:id="btnClearSearch" onAction="#handleClearSearch" styleClass="button-secondary" text="Limpiar busqueda" />
+                <TextField fx:id="txtSearch" prefHeight="36.0" prefWidth="338.0" promptText="Buscar por código, nombre o correo" styleClass="text-field" />
+                <Button fx:id="btnClearSearch" onAction="#handleClearSearch" prefHeight="36.0" prefWidth="179.0" styleClass="button-secondary" text="Limpiar busqueda" />
+                <Button fx:id="btnSearch" onAction="#handleSearch" prefHeight="36.0" prefWidth="120.0" text="Buscar" />
             </children>
         </HBox>
 
@@ -30,40 +30,40 @@
         <Label text="Datos del Bibliotecario" />
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtUserCode" promptText="Codigo (ej: BIB001)" prefWidth="150" styleClass="text-field" />
-                <TextField fx:id="txtFirstName" promptText="Nombre" prefWidth="180" styleClass="text-field" />
-                <TextField fx:id="txtLastName" promptText="Apellido" prefWidth="180" styleClass="text-field" />
+                <TextField fx:id="txtUserCode" prefHeight="36.0" prefWidth="147.0" promptText="Codigo (ej: BIB001)" styleClass="text-field" />
+                <TextField fx:id="txtFirstName" prefWidth="180" promptText="Nombre" styleClass="text-field" />
+                <TextField fx:id="txtLastName" prefWidth="180" promptText="Apellido" styleClass="text-field" />
             </children>
         </HBox>
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtEmail" promptText="Correo electronico" prefWidth="280" styleClass="text-field" />
-                <TextField fx:id="txtPassword" promptText="Contrasena" prefWidth="200" styleClass="text-field" />
-                <CheckBox fx:id="chkActive" text="Activo" selected="true" />
+                <TextField fx:id="txtEmail" prefHeight="36.0" prefWidth="337.0" promptText="Correo electronico" styleClass="text-field" />
+                <TextField fx:id="txtPassword" prefHeight="36.0" prefWidth="180.0" promptText="Contrasena" styleClass="text-field" />
+                <CheckBox fx:id="chkActive" prefHeight="34.0" prefWidth="80.0" selected="true" text="Activo" />
             </children>
         </HBox>
         <HBox spacing="10.0">
             <children>
-                <Button fx:id="btnAdd" onAction="#handleAdd" text="Agregar" />
-                <Button fx:id="btnUpdate" onAction="#handleUpdate" styleClass="button-secondary" text="Actualizar" />
-                <Button fx:id="btnDelete" onAction="#handleDelete" styleClass="button-danger" text="Eliminar" />
-                <Button fx:id="btnClearFields" onAction="#handleClearFields" styleClass="button-secondary" text="Limpiar campos" />
+                <Button fx:id="btnAdd" onAction="#handleAdd" prefHeight="36.0" prefWidth="149.0" text="Agregar" />
+                <Button fx:id="btnDelete" onAction="#handleDelete" prefHeight="36.0" prefWidth="176.0" styleClass="button-danger" text="Eliminar" />
+                <Button fx:id="btnUpdate" onAction="#handleUpdate" prefHeight="36.0" prefWidth="180.0" styleClass="button-secondary" text="Actualizar" />
+                <Button fx:id="btnClearFields" onAction="#handleClearFields" prefHeight="36.0" prefWidth="161.0" styleClass="button-secondary" text="Limpiar campos" />
             </children>
         </HBox>
 
         <!-- TABLA -->
         <TableView fx:id="tableLibrarians" prefHeight="350.0">
             <columns>
-                <TableColumn fx:id="colUserId" text="ID" prefWidth="60" />
-                <TableColumn fx:id="colUserCode" text="Codigo" prefWidth="120" />
-                <TableColumn fx:id="colFirstName" text="Nombre" prefWidth="150" />
-                <TableColumn fx:id="colLastName" text="Apellido" prefWidth="150" />
-                <TableColumn fx:id="colEmail" text="Correo" prefWidth="250" />
-                <TableColumn fx:id="colRole" text="Rol" prefWidth="120" />
-                <TableColumn fx:id="colActive" text="Activo" prefWidth="80" />
+                <TableColumn fx:id="colUserId" prefWidth="60" text="ID" />
+                <TableColumn fx:id="colUserCode" prefWidth="120" text="Codigo" />
+                <TableColumn fx:id="colFirstName" prefWidth="150" text="Nombre" />
+                <TableColumn fx:id="colLastName" prefWidth="150" text="Apellido" />
+                <TableColumn fx:id="colEmail" prefWidth="250" text="Correo" />
+                <TableColumn fx:id="colRole" prefWidth="120" text="Rol" />
+                <TableColumn fx:id="colActive" prefWidth="80" text="Activo" />
             </columns>
         </TableView>
 
-        <Button fx:id="btnBack" onAction="#handleBack" styleClass="button-back" text="Regresar" />
+        <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36.0" prefWidth="131.0" styleClass="button-back" text="Regresar" />
     </children>
 </VBox>

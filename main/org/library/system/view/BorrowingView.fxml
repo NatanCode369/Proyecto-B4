@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="700.0" prefWidth="1000.0" spacing="12.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/23.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.BorrowingController">
+<VBox prefHeight="700.0" prefWidth="1000.0" spacing="12.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.BorrowingController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -32,7 +32,7 @@
             <children>
                 <TextField fx:id="txtIsbn" prefWidth="180" promptText="ISBN" styleClass="text-field" />
                 <TextField fx:id="txtBookTitle" prefWidth="250" promptText="Título" styleClass="text-field" />
-                <Button fx:id="btnSearchBook" onAction="#handleSearchBook" text="Buscar Libro" />
+                <Button fx:id="btnSearchBook" onAction="#handleSearchBook" prefHeight="36.0" prefWidth="157.0" text="Buscar Libro" />
             </children>
         </HBox>
 
@@ -57,9 +57,9 @@
 
         <HBox spacing="10.0">
             <children>
-                <Button fx:id="btnGenerateBorrowing" onAction="#handleGenerateBorrowing" text="Generar Préstamo" />
-                <Button fx:id="btnPrintReceipt" onAction="#handlePrintReceipt" styleClass="button-secondary" text="Imprimir Comprobante" />
-                <Button fx:id="btnBack" onAction="#handleBack" styleClass="button-back" text="Regresar" />
+                <Button fx:id="btnGenerateBorrowing" onAction="#handleGenerateBorrowing" prefHeight="36.0" prefWidth="205.0" text="Generar Préstamo" />
+                <Button fx:id="btnPrintReceipt" onAction="#handlePrintReceipt" prefHeight="36.0" prefWidth="232.0" styleClass="button-secondary" text="Imprimir Comprobante" />
+                <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36.0" prefWidth="181.0" styleClass="button-back" text="Regresar" />
             </children>
         </HBox>
     </children>

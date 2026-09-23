@@ -113,7 +113,7 @@ public class LibrarianController {
             return;
         }
 
-        if (validations.validateEmail(txtEmail.getText())) {
+        if (!validations.validateEmail(txtEmail.getText().trim())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato no válido para el email.");
             return;
