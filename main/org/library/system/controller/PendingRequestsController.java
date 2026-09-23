@@ -5,11 +5,25 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import org.library.system.dao.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import org.library.system.dao.BookDao;
+import org.library.system.dao.LoanDao;
+import org.library.system.dao.LoanDetailDao;
+import org.library.system.dao.LoanRequestDao;
+import org.library.system.dao.LoanRequestDetailDao;
+import org.library.system.dao.UserDao;
 import org.library.system.enums.LoanStatus;
 import org.library.system.enums.RequestStatus;
-import org.library.system.model.*;
+import org.library.system.model.Book;
+import org.library.system.model.Loan;
+import org.library.system.model.LoanApplication;
+import org.library.system.model.LoanDetails;
+import org.library.system.model.RequestDetails;
+import org.library.system.model.User;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.SceneManager;
 import org.library.system.utils.SessionManager;
 
@@ -53,8 +67,7 @@ public class PendingRequestsController {
         colStudentCode.setCellValueFactory(c -> {
             try {
                 var user = userDao.findById(c.getValue().getStudent_id());
-                return new SimpleStringProperty(
-                        user.map(User::getUser_code).orElse("N/A"));
+                return new SimpleStringProperty(user.map(User::getUser_code).orElse("N/A"));
             } catch (SQLException e) {
                 return new SimpleStringProperty("N/A");
             }
@@ -64,8 +77,7 @@ public class PendingRequestsController {
             try {
                 var user = userDao.findById(c.getValue().getStudent_id());
                 return new SimpleStringProperty(
-                        user.map(u -> u.getFirst_name() + " " + u.getLast_name())
-                                .orElse("N/A"));
+                        user.map(u -> u.getFirst_name() + " " + u.getLast_name()).orElse("N/A"));
             } catch (SQLException e) {
                 return new SimpleStringProperty("N/A");
             }
@@ -86,8 +98,8 @@ public class PendingRequestsController {
             all.removeIf(r -> r.getStatus() != RequestStatus.PENDING);
             requestList.setAll(all);
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error de base de datos",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al cargar solicitudes: " + e.getMessage());
         }
     }
 
@@ -95,7 +107,7 @@ public class PendingRequestsController {
     private void handleApprove() {
         LoanApplication selected = tableRequests.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin seleccion",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Seleccione una solicitud de la tabla.");
             return;
         }
@@ -104,13 +116,11 @@ public class PendingRequestsController {
         if (librarian == null) return;
 
         try {
-            // 1. Actualizar estado de la solicitud
             selected.setStatus(RequestStatus.APPROVED);
             selected.setLibrarian_id(librarian.getUser_id());
             selected.setResponse_date(LocalDate.now());
             loanRequestDao.update(selected);
 
-            // 2. Crear el prestamo
             Loan loan = new Loan();
             loan.setRequest_id(selected.getRequest_id());
             loan.setStudent_id(selected.getStudent_id());
@@ -120,11 +130,9 @@ public class PendingRequestsController {
 
             int loanId = loanDao.create(loan);
 
-            // 3. Obtener los detalles de la solicitud
             List<RequestDetails> details = loanRequestDetailDao.search(
                     String.valueOf(selected.getRequest_id()));
 
-            // 4. Crear detalles del prestamo + bajar stock
             for (RequestDetails detail : details) {
                 LoanDetails loanDetail = new LoanDetails();
                 loanDetail.setLoan_id(loanId);
@@ -133,7 +141,6 @@ public class PendingRequestsController {
                 loanDetail.setReturned_quantity(0);
                 loanDetailDao.create(loanDetail);
 
-                // Bajar stock del libro
                 var bookOpt = bookDao.findById(detail.getBook_id());
                 if (bookOpt.isPresent()) {
                     Book book = bookOpt.get();
@@ -142,14 +149,14 @@ public class PendingRequestsController {
                 }
             }
 
-            showAlert(Alert.AlertType.INFORMATION, "Solicitud aprobada",
-                    "Se aprobo la solicitud y se creo el prestamo #" + loanId);
+            AlertUtils.instanceAlert().show(AppStatus.OK,
+                    "Se aprobó la solicitud y se creó el préstamo #" + loanId);
 
             loadPendingRequests();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error al aprobar",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al aprobar: " + e.getMessage());
         }
     }
 
@@ -157,7 +164,7 @@ public class PendingRequestsController {
     private void handleReject() {
         LoanApplication selected = tableRequests.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin seleccion",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Seleccione una solicitud de la tabla.");
             return;
         }
@@ -171,14 +178,14 @@ public class PendingRequestsController {
             selected.setResponse_date(LocalDate.now());
             loanRequestDao.update(selected);
 
-            showAlert(Alert.AlertType.INFORMATION, "Solicitud rechazada",
+            AlertUtils.instanceAlert().show(AppStatus.OK,
                     "La solicitud #" + selected.getRequest_id() + " fue rechazada.");
 
             loadPendingRequests();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error al rechazar",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al rechazar: " + e.getMessage());
         }
     }
 
@@ -192,13 +199,5 @@ public class PendingRequestsController {
         SceneManager.getInstanciaSceneManager().goTo(
                 "/org/library/system/view/DashboardView.fxml"
         );
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

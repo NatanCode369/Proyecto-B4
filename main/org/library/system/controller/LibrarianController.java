@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import org.library.system.dao.UserDao;
 import org.library.system.enums.Role;
 import org.library.system.model.User;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.PasswordUtil;
 import org.library.system.utils.SceneManager;
 import org.library.system.utils.Validations;
@@ -39,7 +41,7 @@ public class LibrarianController {
     @FXML private Button btnBack;
 
     private final UserDao userDao = new UserDao();
-    private final Validations validations = new Validations();
+    private final Validations validations = Validations.getInstancevalidations();
     private final ObservableList<User> librarianList = FXCollections.observableArrayList();
 
     @FXML
@@ -70,7 +72,8 @@ public class LibrarianController {
             users.removeIf(u -> u.getUser_role() != Role.LIBRARIAN);
             librarianList.setAll(users);
         } catch (SQLException e) {
-            System.err.println("Error al cargar bibliotecarios: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al cargar bibliotecarios: " + e.getMessage());
         }
     }
 
@@ -81,8 +84,14 @@ public class LibrarianController {
             List<User> results = userDao.search(filter == null ? "" : filter.trim());
             results.removeIf(u -> u.getUser_role() != Role.LIBRARIAN);
             librarianList.setAll(results);
+
+            if (results.isEmpty()) {
+                AlertUtils.instanceAlert().show(AppStatus.NOT_FOUND,
+                        "No se encontraron bibliotecarios con ese criterio.");
+            }
         } catch (SQLException e) {
-            System.err.println("Error al buscar: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al buscar: " + e.getMessage());
         }
     }
 
@@ -94,14 +103,36 @@ public class LibrarianController {
 
     @FXML
     private void handleAdd() {
-        if (!validateFields(true)) return;
+        if (validations.isEmpty(txtUserCode.getText())
+                || validations.isEmpty(txtFirstName.getText())
+                || validations.isEmpty(txtLastName.getText())
+                || validations.isEmpty(txtEmail.getText())
+                || validations.isEmpty(txtPassword.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Complete todos los campos obligatorios.");
+            return;
+        }
+
+        if (!validations.validateEmail(txtEmail.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Formato no válido para el email.");
+            return;
+        }
 
         try {
             String userCode = txtUserCode.getText().trim();
             String email = txtEmail.getText().trim().toLowerCase();
 
-            if (userDao.findByCode(userCode).isPresent()) return;
-            if (userDao.findByEmail(email).isPresent()) return;
+            if (userDao.findByCode(userCode).isPresent()) {
+                AlertUtils.instanceAlert().show(AppStatus.CONFLICT,
+                        "El código ya existe: " + userCode);
+                return;
+            }
+            if (userDao.findByEmail(email).isPresent()) {
+                AlertUtils.instanceAlert().show(AppStatus.CONFLICT,
+                        "El correo ya existe: " + email);
+                return;
+            }
 
             User user = new User();
             user.setUser_code(userCode);
@@ -113,19 +144,36 @@ public class LibrarianController {
             user.setActive(chkActive.isSelected());
 
             userDao.create(user);
+
+            AlertUtils.instanceAlert().show(AppStatus.USER_CREATED,
+                    "Bibliotecario registrado correctamente.");
+
             loadLibrarians();
             clearFields();
 
         } catch (SQLException e) {
-            System.err.println("Error al crear bibliotecario: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al crear bibliotecario: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleUpdate() {
         User selected = tableLibrarians.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        if (!validateFields(false)) return;
+        if (selected == null) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Seleccione un bibliotecario de la tabla.");
+            return;
+        }
+
+        if (validations.isEmpty(txtUserCode.getText())
+                || validations.isEmpty(txtFirstName.getText())
+                || validations.isEmpty(txtLastName.getText())
+                || validations.isEmpty(txtEmail.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Complete todos los campos obligatorios.");
+            return;
+        }
 
         try {
             selected.setUser_code(txtUserCode.getText().trim());
@@ -138,25 +186,40 @@ public class LibrarianController {
             selected.setActive(chkActive.isSelected());
 
             userDao.update(selected);
+
+            AlertUtils.instanceAlert().show(AppStatus.OK,
+                    "Bibliotecario actualizado correctamente.");
+
             loadLibrarians();
             clearFields();
 
         } catch (SQLException e) {
-            System.err.println("Error al actualizar: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al actualizar: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleDelete() {
         User selected = tableLibrarians.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Seleccione un bibliotecario de la tabla.");
+            return;
+        }
 
         try {
             userDao.delete(selected.getUser_id());
+
+            AlertUtils.instanceAlert().show(AppStatus.USER_DELETED,
+                    "Bibliotecario eliminado correctamente.");
+
             loadLibrarians();
             clearFields();
+
         } catch (SQLException e) {
-            System.err.println("Error al eliminar: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al eliminar: " + e.getMessage());
         }
     }
 
@@ -189,14 +252,5 @@ public class LibrarianController {
         txtPassword.clear();
         chkActive.setSelected(true);
         tableLibrarians.getSelectionModel().clearSelection();
-    }
-
-    private boolean validateFields(boolean requirePassword) {
-        if (validations.isEmpty(txtUserCode.getText())) return false;
-        if (validations.isEmpty(txtFirstName.getText())) return false;
-        if (validations.isEmpty(txtLastName.getText())) return false;
-        if (validations.isEmpty(txtEmail.getText())) return false;
-        if (requirePassword && validations.isEmpty(txtPassword.getText())) return false;
-        return true;
     }
 }

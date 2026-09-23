@@ -5,14 +5,31 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import org.library.system.dao.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import org.library.system.dao.BookDao;
+import org.library.system.dao.LoanDao;
+import org.library.system.dao.LoanDetailDao;
+import org.library.system.dao.LoanRequestDao;
+import org.library.system.dao.LoanRequestDetailDao;
+import org.library.system.dao.UserDao;
 import org.library.system.enums.LoanStatus;
 import org.library.system.enums.RequestStatus;
-import org.library.system.model.*;
-import org.library.system.utils.ReceiptReportGenerator;
+import org.library.system.model.Book;
+import org.library.system.model.Loan;
+import org.library.system.model.LoanApplication;
+import org.library.system.model.LoanDetails;
+import org.library.system.model.RequestDetails;
+import org.library.system.model.User;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.SceneManager;
 import org.library.system.utils.SessionManager;
+import org.library.system.utils.Validations;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -46,6 +63,7 @@ public class BorrowingController {
     private final LoanRequestDao loanRequestDao = new LoanRequestDao();
     private final LoanDetailDao loanDetailDao = new LoanDetailDao();
     private final LoanRequestDetailDao loanRequestDetailDao = new LoanRequestDetailDao();
+    private final Validations validations = Validations.getInstancevalidations();
 
     private final ObservableList<Book> bookList = FXCollections.observableArrayList();
 
@@ -77,8 +95,8 @@ public class BorrowingController {
     @FXML
     private void handleSearchStudent() {
         String carnet = txtStudentId.getText();
-        if (carnet == null || carnet.isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Sin datos",
+        if (validations.isEmpty(carnet)) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Ingrese el carnet del estudiante.");
             return;
         }
@@ -90,7 +108,7 @@ public class BorrowingController {
                 selectedStudent = null;
                 lblStudentName.setText("Nombre: -");
                 lblStudentEmail.setText("Correo: -");
-                showAlert(Alert.AlertType.WARNING, "No encontrado",
+                AlertUtils.instanceAlert().show(AppStatus.NOT_FOUND,
                         "Estudiante no encontrado con carnet: " + carnet);
                 return;
             }
@@ -100,13 +118,9 @@ public class BorrowingController {
                     + " " + selectedStudent.getLast_name());
             lblStudentEmail.setText("Correo: " + selectedStudent.getEmail());
 
-            showAlert(Alert.AlertType.INFORMATION, "Estudiante encontrado",
-                    "Estudiante: " + selectedStudent.getFirst_name()
-                            + " " + selectedStudent.getLast_name());
-
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error de base de datos",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al buscar estudiante: " + e.getMessage());
         }
     }
 
@@ -116,45 +130,42 @@ public class BorrowingController {
         String title = txtBookTitle.getText();
 
         String filter = "";
-        if (isbn != null && !isbn.isBlank()) filter = isbn.trim();
-        else if (title != null && !title.isBlank()) filter = title.trim();
+        if (!validations.isEmpty(isbn)) filter = isbn.trim();
+        else if (!validations.isEmpty(title)) filter = title.trim();
 
         try {
             List<Book> results = bookDao.search(filter);
             bookList.setAll(results);
 
             if (results.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Sin resultados",
+                AlertUtils.instanceAlert().show(AppStatus.NOT_FOUND,
                         "No se encontraron libros con ese criterio.");
-            } else {
-                showAlert(Alert.AlertType.INFORMATION, "Resultados",
-                        "Se encontraron " + results.size() + " libro(s).");
             }
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error de base de datos",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al buscar libros: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleGenerateBorrowing() {
         if (selectedStudent == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin estudiante",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Busque un estudiante primero.");
             return;
         }
         if (selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin libro",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Seleccione un libro de la tabla.");
             return;
         }
         if (dpDueDate.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin fecha",
-                    "Seleccione la fecha limite de devolucion.");
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Seleccione la fecha límite de devolución.");
             return;
         }
         if (selectedBook.getAvailable_stock() <= 0) {
-            showAlert(Alert.AlertType.WARNING, "Sin stock",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "No hay ejemplares disponibles de este libro.");
             return;
         }
@@ -163,7 +174,6 @@ public class BorrowingController {
         if (librarian == null) return;
 
         try {
-            // 1. Crear solicitud aprobada
             LoanApplication request = new LoanApplication();
             request.setStudent_id(selectedStudent.getUser_id());
             request.setStatus(RequestStatus.APPROVED);
@@ -172,14 +182,12 @@ public class BorrowingController {
 
             int requestId = loanRequestDao.create(request);
 
-            // 2. Detalle de la solicitud
             RequestDetails requestDetail = new RequestDetails();
             requestDetail.setRequest_id(requestId);
             requestDetail.setBook_id(selectedBook.getBook_id());
             requestDetail.setQuantity(1);
             loanRequestDetailDao.create(requestDetail);
 
-            // 3. Crear el prestamo
             Loan loan = new Loan();
             loan.setRequest_id(requestId);
             loan.setStudent_id(selectedStudent.getUser_id());
@@ -189,7 +197,6 @@ public class BorrowingController {
 
             int loanId = loanDao.create(loan);
 
-            // 4. Detalle del prestamo
             LoanDetails loanDetail = new LoanDetails();
             loanDetail.setLoan_id(loanId);
             loanDetail.setBook_id(selectedBook.getBook_id());
@@ -197,55 +204,36 @@ public class BorrowingController {
             loanDetail.setReturned_quantity(0);
             loanDetailDao.create(loanDetail);
 
-            // 5. Bajar stock
             selectedBook.setAvailable_stock(selectedBook.getAvailable_stock() - 1);
             bookDao.update(selectedBook);
 
-            showAlert(Alert.AlertType.INFORMATION, "Prestamo creado",
-                    "Prestamo #" + loanId + " registrado exitosamente.\n" +
-                            "Estudiante: " + selectedStudent.getFirst_name() + "\n" +
-                            "Libro: " + selectedBook.getTitle() + "\n" +
-                            "Fecha limite: " + dpDueDate.getValue());
+            AlertUtils.instanceAlert().show(AppStatus.OK,
+                    "Préstamo #" + loanId + " registrado exitosamente.\n"
+                            + "Estudiante: " + selectedStudent.getFirst_name() + "\n"
+                            + "Libro: " + selectedBook.getTitle() + "\n"
+                            + "Fecha límite: " + dpDueDate.getValue());
 
             bookList.setAll(bookDao.search(""));
             clearForm();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error al generar prestamo",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al generar préstamo: " + e.getMessage());
         }
     }
 
     @FXML
     private void handlePrintReceipt() {
         if (selectedStudent == null || selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin datos",
-                    "Genere un prestamo primero.");
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Genere un préstamo primero.");
             return;
         }
 
-        // TODO: Obtener el ultimo loan generado para este estudiante y libro
-        // Por ahora se usa un objeto Loan de ejemplo
-        Loan loan = new Loan();
-        loan.setLoan_date(LocalDate.now());
-        loan.setDue_date(dpDueDate.getValue());
+        // TODO: Integrar JasperReports aqui
 
-        // Llamar al JasperReports
-        String pdfPath = ReceiptReportGenerator.generateReceipt(
-                loan,
-                selectedStudent,
-                selectedBook,
-                1  // numero de comprobante
-        );
-
-        if (pdfPath != null) {
-            showAlert(Alert.AlertType.INFORMATION, "Comprobante generado",
-                    "El comprobante se guardo en:\n" + pdfPath);
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Reporte pendiente",
-                    "La generacion del comprobante con JasperReports aun no esta implementada.\n" +
-                            "Consulte con el equipo de desarrollo.");
-        }
+        AlertUtils.instanceAlert().show(AppStatus.OK,
+                "La generación del comprobante con JasperReports está pendiente de implementación.");
     }
 
     @FXML
@@ -265,13 +253,5 @@ public class BorrowingController {
         selectedStudent = null;
         selectedBook = null;
         bookList.clear();
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

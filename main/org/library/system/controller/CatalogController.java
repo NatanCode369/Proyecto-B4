@@ -5,7 +5,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.library.system.dao.BookDao;
 import org.library.system.dao.LoanRequestDao;
@@ -16,6 +19,8 @@ import org.library.system.model.Book;
 import org.library.system.model.LoanApplication;
 import org.library.system.model.RequestDetails;
 import org.library.system.model.User;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.SceneManager;
 import org.library.system.utils.SessionManager;
 import org.library.system.utils.Validations;
@@ -59,7 +64,7 @@ public class CatalogController {
     private final BookDao bookDao = new BookDao();
     private final LoanRequestDao loanRequestDao = new LoanRequestDao();
     private final LoanRequestDetailDao loanRequestDetailDao = new LoanRequestDetailDao();
-    private final Validations validations = new Validations();
+    private final Validations validations = Validations.getInstancevalidations();
     private final ObservableList<Book> bookList = FXCollections.observableArrayList();
 
     private Book selectedBook;
@@ -115,7 +120,8 @@ public class CatalogController {
             List<Book> books = bookDao.search("");
             bookList.setAll(books);
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al cargar libros: " + e.getMessage());
         }
     }
 
@@ -134,14 +140,20 @@ public class CatalogController {
         String isbn = txtSearchIsbn.getText();
 
         String filter = "";
-        if (title != null && !title.isBlank()) filter = title.trim();
-        else if (isbn != null && !isbn.isBlank()) filter = isbn.trim();
+        if (!validations.isEmpty(title)) filter = title.trim();
+        else if (!validations.isEmpty(isbn)) filter = isbn.trim();
 
         try {
             List<Book> results = bookDao.search(filter);
             bookList.setAll(results);
+
+            if (results.isEmpty()) {
+                AlertUtils.instanceAlert().show(AppStatus.NOT_FOUND,
+                        "No se encontraron libros con ese criterio.");
+            }
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al buscar: " + e.getMessage());
         }
     }
 
@@ -154,56 +166,75 @@ public class CatalogController {
 
     @FXML
     private void handleAddBook() {
-        String isbn = txtIsbn.getText();
-        String title = txtTitle.getText();
-        String author = txtAuthor.getText();
-        String publisher = txtPublisher.getText();
-        String yearStr = txtYear.getText();
-        String copiesStr = txtCopies.getText();
-
-        if (validations.isEmpty(isbn) || validations.isEmpty(title)
-                || validations.isEmpty(author) || validations.isEmpty(publisher)
-                || validations.isEmpty(yearStr) || validations.isEmpty(copiesStr)) {
-            showAlert(Alert.AlertType.WARNING, "Campos vacios",
+        if (validations.isEmpty(txtIsbn.getText())
+                || validations.isEmpty(txtTitle.getText())
+                || validations.isEmpty(txtAuthor.getText())
+                || validations.isEmpty(txtPublisher.getText())
+                || validations.isEmpty(txtYear.getText())
+                || validations.isEmpty(txtCopies.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Complete todos los campos.");
             return;
         }
-        if (!validations.validateInteger(yearStr) || !validations.validateInteger(copiesStr)) {
-            showAlert(Alert.AlertType.WARNING, "Datos invalidos",
-                    "Anio y copias deben ser numeros.");
+
+        if (!validations.validateInteger(txtYear.getText())
+                || !validations.validateInteger(txtCopies.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Año y copias deben ser números.");
             return;
         }
 
         try {
-            int year = Integer.parseInt(yearStr);
-            int copies = Integer.parseInt(copiesStr);
+            int year = Integer.parseInt(txtYear.getText());
+            int copies = Integer.parseInt(txtCopies.getText());
 
             Book book = new Book();
-            book.setIsbn(isbn.trim());
-            book.setTitle(title.trim());
-            book.setAuthor(author.trim());
-            book.setPublisher(publisher.trim());
+            book.setIsbn(txtIsbn.getText().trim());
+            book.setTitle(txtTitle.getText().trim());
+            book.setAuthor(txtAuthor.getText().trim());
+            book.setPublisher(txtPublisher.getText().trim());
             book.setPublication_year(year);
             book.setTotal_stock(copies);
             book.setAvailable_stock(copies);
             book.setActive(true);
 
             bookDao.create(book);
-            showAlert(Alert.AlertType.INFORMATION, "Libro creado",
-                    "El libro se registro correctamente.");
+
+            AlertUtils.instanceAlert().show(AppStatus.BOOK_CREATED,
+                    "El libro se registró correctamente.");
+
             loadBooks();
             clearFields();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error al crear", e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al crear libro: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleUpdateBook() {
         if (selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin seleccion",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Seleccione un libro de la tabla.");
+            return;
+        }
+
+        if (validations.isEmpty(txtIsbn.getText())
+                || validations.isEmpty(txtTitle.getText())
+                || validations.isEmpty(txtAuthor.getText())
+                || validations.isEmpty(txtPublisher.getText())
+                || validations.isEmpty(txtYear.getText())
+                || validations.isEmpty(txtCopies.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Complete todos los campos.");
+            return;
+        }
+
+        if (!validations.validateInteger(txtYear.getText())
+                || !validations.validateInteger(txtCopies.getText())) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Año y copias deben ser números.");
             return;
         }
 
@@ -216,33 +247,39 @@ public class CatalogController {
             selectedBook.setTotal_stock(Integer.parseInt(txtCopies.getText()));
 
             bookDao.update(selectedBook);
-            showAlert(Alert.AlertType.INFORMATION, "Libro actualizado",
-                    "El libro se actualizo correctamente.");
+
+            AlertUtils.instanceAlert().show(AppStatus.OK,
+                    "El libro se actualizó correctamente.");
+
             loadBooks();
             clearFields();
 
-        } catch (SQLException | NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Error al actualizar", e.getMessage());
+        } catch (SQLException e) {
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al actualizar: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleDeleteBook() {
         if (selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin seleccion",
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Seleccione un libro de la tabla.");
             return;
         }
 
         try {
             bookDao.delete(selectedBook.getBook_id());
-            showAlert(Alert.AlertType.INFORMATION, "Libro eliminado",
-                    "El libro se elimino correctamente.");
+
+            AlertUtils.instanceAlert().show(AppStatus.BOOK_DELETED,
+                    "El libro se eliminó correctamente.");
+
             loadBooks();
             clearFields();
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error al eliminar", e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al eliminar: " + e.getMessage());
         }
     }
 
@@ -260,10 +297,8 @@ public class CatalogController {
 
     @FXML
     private void handleRequestBorrowing() {
-        Book selected = tableBooks.getSelectionModel().getSelectedItem();
-
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Sin seleccion",
+        if (selectedBook == null) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Debe seleccionar un libro de la tabla.");
             return;
         }
@@ -280,21 +315,22 @@ public class CatalogController {
 
             RequestDetails detail = new RequestDetails();
             detail.setRequest_id(requestId);
-            detail.setBook_id(selected.getBook_id());
+            detail.setBook_id(selectedBook.getBook_id());
             detail.setQuantity(1);
             loanRequestDetailDao.create(detail);
 
-            showAlert(Alert.AlertType.INFORMATION, "Solicitud enviada",
-                    "Tu solicitud de prestamo ha sido enviada.\n" +
-                            "Libro: " + selected.getTitle() + "\n" +
-                            "Espera la aprobacion del bibliotecario.");
+            AlertUtils.instanceAlert().show(AppStatus.OK,
+                    "Tu solicitud de préstamo ha sido enviada.\n"
+                            + "Libro: " + selectedBook.getTitle() + "\n"
+                            + "Espera la aprobación del bibliotecario.");
 
             bookList.setAll(bookDao.search(""));
             tableBooks.getSelectionModel().clearSelection();
+            selectedBook = null;
 
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error de base de datos",
-                    e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al solicitar préstamo: " + e.getMessage());
         }
     }
 
@@ -314,13 +350,5 @@ public class CatalogController {
         txtCopies.clear();
         selectedBook = null;
         tableBooks.getSelectionModel().clearSelection();
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

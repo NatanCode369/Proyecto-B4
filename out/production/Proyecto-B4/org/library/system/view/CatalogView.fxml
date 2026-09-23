@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="750.0" prefWidth="1150.0" spacing="10.0" styleClass="root" stylesheets="@../styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogController">
+<VBox prefHeight="750.0" prefWidth="1150.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.CatalogController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -18,10 +18,10 @@
 
         <HBox spacing="10.0">
             <children>
-                <TextField fx:id="txtSearchTitle" promptText="Buscar por titulo" prefWidth="300" styleClass="text-field" />
-                <TextField fx:id="txtSearchIsbn" promptText="Buscar por ISBN" prefWidth="200" styleClass="text-field" />
+                <TextField fx:id="txtSearchTitle" prefHeight="36.0" prefWidth="369.0" promptText="Buscar por título" styleClass="text-field" />
+                <TextField fx:id="txtSearchIsbn" prefHeight="36.0" prefWidth="152.0" promptText="Buscar por ISBN" styleClass="text-field" />
                 <Button fx:id="btnSearch" onAction="#handleSearch" text="Buscar" />
-                <Button fx:id="btnClearSearch" onAction="#handleClearSearch" styleClass="button-secondary" text="Limpiar busqueda" />
+                <Button fx:id="btnClearSearch" onAction="#handleClearSearch" styleClass="button-secondary" text="Limpiar búsqueda" />
             </children>
         </HBox>
 
@@ -30,23 +30,23 @@
                 <Label text="Datos del Libro" />
                 <HBox spacing="10.0">
                     <children>
-                        <TextField fx:id="txtIsbn" promptText="ISBN" prefWidth="150" styleClass="text-field" />
-                        <TextField fx:id="txtTitle" promptText="Titulo" prefWidth="200" styleClass="text-field" />
-                        <TextField fx:id="txtAuthor" promptText="Autor" prefWidth="150" styleClass="text-field" />
+                        <TextField fx:id="txtIsbn" prefWidth="150" promptText="ISBN" styleClass="text-field" />
+                        <TextField fx:id="txtTitle" prefHeight="36.0" prefWidth="210.0" promptText="Título" styleClass="text-field" />
+                        <TextField fx:id="txtAuthor" prefWidth="150.0" promptText="Autor" styleClass="text-field" />
                     </children>
                 </HBox>
                 <HBox spacing="10.0">
                     <children>
-                        <TextField fx:id="txtPublisher" promptText="Editorial" prefWidth="150" styleClass="text-field" />
-                        <TextField fx:id="txtYear" promptText="Anio" prefWidth="100" styleClass="text-field" />
-                        <TextField fx:id="txtCopies" promptText="Copias" prefWidth="100" styleClass="text-field" />
+                        <TextField fx:id="txtPublisher" prefWidth="150" promptText="Editorial" styleClass="text-field" />
+                        <TextField fx:id="txtYear" prefHeight="36.0" prefWidth="210.0" promptText="Año" styleClass="text-field" />
+                        <TextField fx:id="txtCopies" prefHeight="36.0" prefWidth="148.0" promptText="Copias" styleClass="text-field" />
                     </children>
                 </HBox>
                 <HBox spacing="10.0">
                     <children>
-                        <Button fx:id="btnAdd" onAction="#handleAddBook" text="Agregar" />
-                        <Button fx:id="btnUpdate" onAction="#handleUpdateBook" styleClass="button-secondary" text="Actualizar" />
-                        <Button fx:id="btnDelete" onAction="#handleDeleteBook" styleClass="button-danger" text="Eliminar" />
+                        <Button fx:id="btnAdd" onAction="#handleAddBook" prefHeight="36.0" prefWidth="149.0" text="Agregar" />
+                        <Button fx:id="btnDelete" onAction="#handleDeleteBook" prefHeight="36.0" prefWidth="212.0" styleClass="button-danger" text="Eliminar" />
+                        <Button fx:id="btnUpdate" onAction="#handleUpdateBook" prefHeight="36.0" prefWidth="149.0" styleClass="button-secondary" text="Actualizar" />
                         <Button fx:id="btnClear" onAction="#handleClearFields" styleClass="button-secondary" text="Limpiar campos" />
                     </children>
                 </HBox>
@@ -55,14 +55,14 @@
 
         <TableView fx:id="tableBooks" prefHeight="350.0">
             <columns>
-                <TableColumn fx:id="colBookId" text="ID" prefWidth="60" />
-                <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150" />
-                <TableColumn fx:id="colTitle" text="Titulo" prefWidth="200" />
-                <TableColumn fx:id="colAuthor" text="Autor" prefWidth="150" />
-                <TableColumn fx:id="colPublisher" text="Editorial" prefWidth="150" />
-                <TableColumn fx:id="colYear" text="Anio" prefWidth="80" />
-                <TableColumn fx:id="colTotalStock" text="Total" prefWidth="80" />
-                <TableColumn fx:id="colAvailableStock" text="Disponibles" prefWidth="100" />
+                <TableColumn fx:id="colBookId" prefWidth="60" text="ID" />
+                <TableColumn fx:id="colIsbn" prefWidth="150" text="ISBN" />
+                <TableColumn fx:id="colTitle" prefWidth="200" text="Título" />
+                <TableColumn fx:id="colAuthor" prefWidth="150" text="Autor" />
+                <TableColumn fx:id="colPublisher" prefWidth="150" text="Editorial" />
+                <TableColumn fx:id="colYear" prefWidth="80" text="Año" />
+                <TableColumn fx:id="colTotalStock" prefWidth="80" text="Total" />
+                <TableColumn fx:id="colAvailableStock" prefWidth="100" text="Disponibles" />
             </columns>
         </TableView>
 

@@ -15,6 +15,8 @@ import org.library.system.model.Book;
 import org.library.system.model.Loan;
 import org.library.system.model.LoanDetails;
 import org.library.system.model.User;
+import org.library.system.utils.AlertUtils;
+import org.library.system.utils.AppStatus;
 import org.library.system.utils.SceneManager;
 import org.library.system.utils.SessionManager;
 
@@ -55,8 +57,7 @@ public class MyLoansController {
                 if (details.isEmpty()) return new SimpleStringProperty("N/A");
 
                 var bookOpt = bookDao.findById(details.get(0).getBook_id());
-                return new SimpleStringProperty(
-                        bookOpt.map(Book::getTitle).orElse("N/A"));
+                return new SimpleStringProperty(bookOpt.map(Book::getTitle).orElse("N/A"));
             } catch (SQLException e) {
                 return new SimpleStringProperty("N/A");
             }
@@ -83,7 +84,8 @@ public class MyLoansController {
             all.removeIf(l -> !l.getStudent_id().equals(user.getUser_id()));
             loanList.setAll(all);
         } catch (SQLException e) {
-            System.err.println("Error al cargar prestamos: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al cargar préstamos: " + e.getMessage());
         }
     }
 
