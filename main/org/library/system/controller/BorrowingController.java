@@ -10,6 +10,7 @@ import org.library.system.dao.*;
 import org.library.system.enums.LoanStatus;
 import org.library.system.enums.RequestStatus;
 import org.library.system.model.*;
+import org.library.system.utils.ReceiptReportGenerator;
 import org.library.system.utils.SceneManager;
 import org.library.system.utils.SessionManager;
 
@@ -223,16 +224,28 @@ public class BorrowingController {
             return;
         }
 
-        String receipt = "COMPROBANTE DE PRESTAMO\n\n" +
-                "Estudiante: " + selectedStudent.getFirst_name() + " "
-                + selectedStudent.getLast_name() + "\n" +
-                "Carnet: " + selectedStudent.getUser_code() + "\n" +
-                "Libro: " + selectedBook.getTitle() + "\n" +
-                "ISBN: " + selectedBook.getIsbn() + "\n" +
-                "Fecha prestamo: " + LocalDate.now() + "\n" +
-                "Fecha limite: " + dpDueDate.getValue();
+        // TODO: Obtener el ultimo loan generado para este estudiante y libro
+        // Por ahora se usa un objeto Loan de ejemplo
+        Loan loan = new Loan();
+        loan.setLoan_date(LocalDate.now());
+        loan.setDue_date(dpDueDate.getValue());
 
-        showAlert(Alert.AlertType.INFORMATION, "Comprobante", receipt);
+        // Llamar al JasperReports
+        String pdfPath = ReceiptReportGenerator.generateReceipt(
+                loan,
+                selectedStudent,
+                selectedBook,
+                1  // numero de comprobante
+        );
+
+        if (pdfPath != null) {
+            showAlert(Alert.AlertType.INFORMATION, "Comprobante generado",
+                    "El comprobante se guardo en:\n" + pdfPath);
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Reporte pendiente",
+                    "La generacion del comprobante con JasperReports aun no esta implementada.\n" +
+                            "Consulte con el equipo de desarrollo.");
+        }
     }
 
     @FXML

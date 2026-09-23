@@ -6,25 +6,25 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" spacing="20.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.DashboardController">
+<VBox prefHeight="600.0" prefWidth="912.0" spacing="20.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.DashboardController">
     <padding>
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
     <children>
-        <Label styleClass="label-title" fx:id="lblWelcome" text="Bienvenido" />
+        <Label fx:id="lblWelcome" styleClass="label-title" text="Bienvenido" />
         <Label fx:id="lblRole" text="Rol: " />
 
-        <HBox spacing="20.0">
+        <HBox prefHeight="315.0" prefWidth="940.0" spacing="20.0">
             <children>
-                <Button fx:id="btnCatalog" onAction="#handleOpenCatalog" text="Gestion de Catalogo" prefWidth="200" />
-                <Button fx:id="btnBorrowings" onAction="#handleOpenBorrowings" text="Gestion de Prestamos" prefWidth="200" />
-                <Button fx:id="btnPendingRequests" onAction="#handlePendingRequests" text="Solicitudes Pendientes" prefWidth="200" />
-                <Button fx:id="btnManageLibrarians" onAction="#handleManageLibrarians" text="Gestion de Bibliotecarios" prefWidth="220" />
-                <Button fx:id="btnConsultCatalog" onAction="#handleConsultCatalog" styleClass="button-secondary" text="Consultar Catalogo" prefWidth="200" />
-                <Button fx:id="btnMyBorrowings" onAction="#handleMyBorrowings" styleClass="button-secondary" text="Mis Prestamos" prefWidth="200" />
+                <Button fx:id="btnCatalog" onAction="#handleOpenCatalog" prefHeight="344.0" prefWidth="121.0" text="Catálogo" />
+                <Button fx:id="btnBorrowings" onAction="#handleOpenBorrowings" prefHeight="325.0" prefWidth="121.0" text="Prestamos" />
+                <Button fx:id="btnPendingRequests" onAction="#handlePendingRequests" prefHeight="373.0" prefWidth="121.0" text="Solicitudes" />
+                <Button fx:id="btnManageLibrarians" onAction="#handleManageLibrarians" prefHeight="349.0" prefWidth="124.0" text="Bibliotecarios" />
+                <Button fx:id="btnConsultCatalog" onAction="#handleConsultCatalog" prefHeight="345.0" prefWidth="122.0" styleClass="button-secondary" text="Catálogo" />
+                <Button fx:id="btnMyBorrowings" onAction="#handleMyBorrowings" prefHeight="370.0" prefWidth="130.0" styleClass="button-secondary" text="Mis Prestamos" />
             </children>
         </HBox>
 
-        <Button fx:id="btnLogout" onAction="#handleLogout" styleClass="button-danger" text="Cerrar Sesion" />
+        <Button fx:id="btnLogout" onAction="#handleLogout" prefHeight="60.0" prefWidth="261.0" styleClass="button-danger" text="Cerrar Sesion" />
     </children>
 </VBox>

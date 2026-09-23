@@ -7,23 +7,23 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.MyLoansController">
+<VBox prefHeight="600.0" prefWidth="975.0" spacing="10.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.MyLoansController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
-        <Label styleClass="label-title" text="Mis Prestamos" />
+        <Label styleClass="label-title" text="Mis Préstamos" />
 
         <TableView fx:id="tableLoans" prefHeight="450.0">
             <columns>
-                <TableColumn fx:id="colLoanId" text="ID" prefWidth="60" />
-                <TableColumn fx:id="colBookTitle" text="Libro" prefWidth="250" />
-                <TableColumn fx:id="colLoanDate" text="Fecha Prestamo" prefWidth="150" />
-                <TableColumn fx:id="colDueDate" text="Fecha Limite" prefWidth="150" />
-                <TableColumn fx:id="colStatus" text="Estado" prefWidth="120" />
+                <TableColumn fx:id="colLoanId" prefWidth="60" text="ID" />
+                <TableColumn fx:id="colBookTitle" prefWidth="250" text="Libro" />
+                <TableColumn fx:id="colLoanDate" prefWidth="150" text="Fecha Préstamo" />
+                <TableColumn fx:id="colDueDate" prefWidth="150" text="Fecha Limite" />
+                <TableColumn fx:id="colStatus" prefWidth="120" text="Estado" />
             </columns>
         </TableView>
 
-        <Button fx:id="btnBack" onAction="#handleBack" styleClass="button-back" text="Regresar" />
+        <Button fx:id="btnBack" onAction="#handleBack" prefHeight="36.0" prefWidth="197.0" styleClass="button-back" text="Regresar" />
     </children>
 </VBox>
