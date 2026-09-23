@@ -23,6 +23,8 @@ import org.library.system.model.User;
  *
  * 3. Completar el metodo generateReceipt() con la logica de llenado del reporte.
  */
+
+//Esta cosa la hizo la IA entonces ya usteddes se encargan de corregir el resto etc.
 public class ReceiptReportGenerator {
 
     private ReceiptReportGenerator() {}
