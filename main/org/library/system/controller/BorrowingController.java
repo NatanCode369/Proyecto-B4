@@ -95,7 +95,7 @@ public class BorrowingController {
     @FXML
     private void handleSearchStudent() {
         String carnet = txtStudentId.getText();
-        if (validations.isEmpty(carnet)) {
+        if (txtStudentId.getText().isEmpty()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Ingrese el carnet del estudiante.");
             return;
@@ -120,18 +120,15 @@ public class BorrowingController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al buscar estudiante: " + e.getMessage());
+                    "Error al buscar estudiante.");
         }
     }
 
     @FXML
     private void handleSearchBook() {
-        String isbn = txtIsbn.getText();
-        String title = txtBookTitle.getText();
-
         String filter = "";
-        if (!validations.isEmpty(isbn)) filter = isbn.trim();
-        else if (!validations.isEmpty(title)) filter = title.trim();
+        if (!txtIsbn.getText().isEmpty()) filter = txtIsbn.getText().trim();
+        else if (!txtBookTitle.getText().isEmpty()) filter = txtBookTitle.getText().trim();
 
         try {
             List<Book> results = bookDao.search(filter);
@@ -139,11 +136,11 @@ public class BorrowingController {
 
             if (results.isEmpty()) {
                 AlertUtils.instanceAlert().show(AppStatus.NOT_FOUND,
-                        "No se encontraron libros con ese criterio.");
+                        "No se encontraron libros con los criterios establecidos.");
             }
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al buscar libros: " + e.getMessage());
+                    "Error al buscar el libro.");
         }
     }
 
@@ -218,7 +215,7 @@ public class BorrowingController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al generar préstamo: " + e.getMessage());
+                    "Error al generar préstamo. Intente de nuevo.");
         }
     }
 

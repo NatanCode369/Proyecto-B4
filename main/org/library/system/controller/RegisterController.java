@@ -36,17 +36,17 @@ public class RegisterController {
     @FXML
     private void handleRegister() {
         // Validar campos obligatorios vacios
-        if (validations.isEmpty(txtName.getText())
-                || validations.isEmpty(txtEmail.getText())
-                || validations.isEmpty(txtPassword.getText())
-                || validations.isEmpty(txtConfirmPassword.getText())) {
+        if (txtName.getText().isEmpty()
+                || txtEmail.getText().isEmpty()
+                || txtPassword.getText().isEmpty()
+                || txtConfirmPassword.getText().isEmpty()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Campos obligatorios vacíos");
             return;
         }
 
         // Validar que las contraseñas coincidan
-        if (!txtPassword.getText().equals(txtConfirmPassword.getText())) {
+        if (!validations.validatePasswordMatch(txtPassword.getText(), txtConfirmPassword.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Las contraseñas no coinciden, asegúrese de que ambas contraseñas coinciden.");
             return;
@@ -66,7 +66,7 @@ public class RegisterController {
         }
 
         // Validar formato de email
-        if (!validations.validateEmail(txtEmail.getText())) {
+        if (!validations.validateEmail(txtEmail.getText().trim())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato no válido para el email.");
             return;
@@ -112,7 +112,7 @@ public class RegisterController {
 
             userDao.create(user);
 
-            AlertUtils.instanceAlert().show(AppStatus.USER_CREATED,
+            AlertUtils.instanceAlert().show(AppStatus.CREATED,
                     "Usuario registrado correctamente. Redirigiendo al login...");
 
             SceneManager.getInstanciaSceneManager().goTo(
@@ -120,8 +120,8 @@ public class RegisterController {
             );
 
         } catch (SQLException e) {
-            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al registrar: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Revise los campos obligatorios y revise de nuevo.");
         }
     }
 

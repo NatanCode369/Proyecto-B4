@@ -7,9 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.library.system.dao.UserDao;
 import org.library.system.model.User;
-import org.library.system.utils.PasswordUtil;
-import org.library.system.utils.SceneManager;
-import org.library.system.utils.SessionManager;
+import org.library.system.utils.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -31,20 +29,17 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        String email = txtEmail.getText();
-        String password = txtPassword.getText();
-
-        if (email == null || email.isBlank()) return;
-        if (password == null || password.isBlank()) return;
+        if (txtEmail.getText() == null || txtEmail.getText().isBlank()) return;
+        if (txtPassword.getText() == null || txtPassword.getText().isBlank()) return;
 
         try {
-            Optional<User> userOpt = userDao.loginByEmail(email.trim().toLowerCase());
+            Optional<User> userOpt = userDao.loginByEmail(txtEmail.getText().trim().toLowerCase());
 
             if (userOpt.isEmpty()) return;
 
             User user = userOpt.get();
 
-            if (!PasswordUtil.verify(password, user.getPassword_hash())) return;
+            if (!PasswordUtil.verify(txtPassword.getText(), user.getPassword_hash())) return;
 
             SessionManager.getInstance().login(user, user.getPassword_hash());
 
@@ -53,7 +48,7 @@ public class LoginController {
             );
 
         } catch (SQLException e) {
-            System.err.println("Error de base de datos: " + e.getMessage());
+            AlertUtils.instanceAlert().show(AppStatus.UNEXPECTED_ERROR, null);
         }
     }
 

@@ -73,7 +73,7 @@ public class LibrarianController {
             librarianList.setAll(users);
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al cargar bibliotecarios: " + e.getMessage());
+                    "Error al cargar bibliotecarios. Intente nuevamente. ");
         }
     }
 
@@ -87,11 +87,11 @@ public class LibrarianController {
 
             if (results.isEmpty()) {
                 AlertUtils.instanceAlert().show(AppStatus.NOT_FOUND,
-                        "No se encontraron bibliotecarios con ese criterio.");
+                        "No se encontraron bibliotecarios con los criterio establecidos.");
             }
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al buscar: " + e.getMessage());
+                    "Error al realizar la búsqueda.");
         }
     }
 
@@ -103,17 +103,17 @@ public class LibrarianController {
 
     @FXML
     private void handleAdd() {
-        if (validations.isEmpty(txtUserCode.getText())
-                || validations.isEmpty(txtFirstName.getText())
-                || validations.isEmpty(txtLastName.getText())
-                || validations.isEmpty(txtEmail.getText())
-                || validations.isEmpty(txtPassword.getText())) {
+        if (txtUserCode.getText().isEmpty()
+                || txtFirstName.getText().isEmpty()
+                || txtLastName.getText().isEmpty()
+                || txtEmail.getText().isEmpty()
+                || txtPassword.getText().isEmpty()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Complete todos los campos obligatorios.");
             return;
         }
 
-        if (!validations.validateEmail(txtEmail.getText())) {
+        if (validations.validateEmail(txtEmail.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato no válido para el email.");
             return;
@@ -145,7 +145,7 @@ public class LibrarianController {
 
             userDao.create(user);
 
-            AlertUtils.instanceAlert().show(AppStatus.USER_CREATED,
+            AlertUtils.instanceAlert().show(AppStatus.CREATED,
                     "Bibliotecario registrado correctamente.");
 
             loadLibrarians();
@@ -166,10 +166,10 @@ public class LibrarianController {
             return;
         }
 
-        if (validations.isEmpty(txtUserCode.getText())
-                || validations.isEmpty(txtFirstName.getText())
-                || validations.isEmpty(txtLastName.getText())
-                || validations.isEmpty(txtEmail.getText())) {
+        if (txtUserCode.getText().isEmpty()
+                || txtFirstName.getText().isEmpty()
+                || txtLastName.getText().isEmpty()
+                || txtEmail.getText().isEmpty()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Complete todos los campos obligatorios.");
             return;
@@ -184,7 +184,6 @@ public class LibrarianController {
                 selected.setPassword_hash(PasswordUtil.hash(txtPassword.getText()));
             }
             selected.setActive(chkActive.isSelected());
-
             userDao.update(selected);
 
             AlertUtils.instanceAlert().show(AppStatus.OK,
@@ -211,7 +210,7 @@ public class LibrarianController {
         try {
             userDao.delete(selected.getUser_id());
 
-            AlertUtils.instanceAlert().show(AppStatus.USER_DELETED,
+            AlertUtils.instanceAlert().show(AppStatus.DELETED,
                     "Bibliotecario eliminado correctamente.");
 
             loadLibrarians();
@@ -219,7 +218,7 @@ public class LibrarianController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al eliminar: " + e.getMessage());
+                    "Error al intentar eliminar. Pruebe nuevamente. ");
         }
     }
 

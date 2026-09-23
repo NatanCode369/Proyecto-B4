@@ -99,7 +99,7 @@ public class PendingRequestsController {
             requestList.setAll(all);
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al cargar solicitudes: " + e.getMessage());
+                    "Error al cargar solicitudes. Intente de nuevo.");
         }
     }
 
@@ -156,7 +156,7 @@ public class PendingRequestsController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al aprobar: " + e.getMessage());
+                    "Error al aprobar la solicitud. Intente de nuevo.");
         }
     }
 
@@ -185,7 +185,7 @@ public class PendingRequestsController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al rechazar: " + e.getMessage());
+                    "Error al rechazar la solicitud. Intente de nuevo. ");
         }
     }
 

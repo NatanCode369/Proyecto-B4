@@ -56,7 +56,7 @@ public class MyLoansController {
                         String.valueOf(c.getValue().getLoan_id()));
                 if (details.isEmpty()) return new SimpleStringProperty("N/A");
 
-                var bookOpt = bookDao.findById(details.get(0).getBook_id());
+                var bookOpt = bookDao.findById(details.getFirst().getBook_id());
                 return new SimpleStringProperty(bookOpt.map(Book::getTitle).orElse("N/A"));
             } catch (SQLException e) {
                 return new SimpleStringProperty("N/A");
@@ -85,7 +85,7 @@ public class MyLoansController {
             loanList.setAll(all);
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al cargar préstamos: " + e.getMessage());
+                    "Error al cargar préstamos. Intente nuevamente. ");
         }
     }
 

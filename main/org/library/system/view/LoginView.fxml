@@ -10,7 +10,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" prefHeight="415.0" prefWidth="336.0" spacing="15.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.LoginController">
+<VBox alignment="TOP_CENTER" prefHeight="415.0" prefWidth="336.0" spacing="15.0" styleClass="root" stylesheets="@../resources/styles/StylesLibrary.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.library.system.controller.LoginController">
     <padding>
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
@@ -20,10 +20,10 @@
                 <Image url="@../resources/images/AvatarConStyleFrutigerAeroVBlue.png" />
             </image>
         </ImageView>
-        <Label styleClass="label-title" text="Iniciar Sesion" />
-        <TextField fx:id="txtEmail" promptText="Correo electronico" styleClass="text-field" />
+        <Label styleClass="label-title" text="Iniciar Sesión" />
+        <TextField fx:id="txtEmail" promptText="Correo electrónico" styleClass="text-field" />
         <PasswordField fx:id="txtPassword" promptText="Contraseña" styleClass="password-field" />
-        <Button fx:id="btnLogin" onAction="#handleLogin" text="Iniciar Sesion" />
+        <Button fx:id="btnLogin" onAction="#handleLogin" text="Iniciar Sesión" />
         <Hyperlink fx:id="hlRegister" onAction="#handleGoToRegister" text="¿No has registrado tu correo?" textFill="#1644fc" />
     </children>
 </VBox>

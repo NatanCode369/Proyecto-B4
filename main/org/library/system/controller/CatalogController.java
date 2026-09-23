@@ -136,12 +136,9 @@ public class CatalogController {
 
     @FXML
     private void handleSearch() {
-        String title = txtSearchTitle.getText();
-        String isbn = txtSearchIsbn.getText();
-
         String filter = "";
-        if (!validations.isEmpty(title)) filter = title.trim();
-        else if (!validations.isEmpty(isbn)) filter = isbn.trim();
+        if (!txtTitle.getText().isEmpty()) filter = txtTitle.getText().trim();
+        else if (!txtIsbn.getText().isEmpty()) filter = txtIsbn.getText().trim();
 
         try {
             List<Book> results = bookDao.search(filter);
@@ -166,41 +163,47 @@ public class CatalogController {
 
     @FXML
     private void handleAddBook() {
-        if (validations.isEmpty(txtIsbn.getText())
-                || validations.isEmpty(txtTitle.getText())
-                || validations.isEmpty(txtAuthor.getText())
-                || validations.isEmpty(txtPublisher.getText())
-                || validations.isEmpty(txtYear.getText())
-                || validations.isEmpty(txtCopies.getText())) {
+        if (!editMode)
+            AlertUtils.instanceAlert().show(AppStatus.FORBIDDEN,
+                    "No tiene permiso para añadir libros.");
+
+        if ((txtTitle.getText().isEmpty() || txtTitle.getText().isBlank()) ||
+                (txtIsbn.getText().isEmpty() || txtIsbn.getText().isBlank()) ||
+                (txtAuthor.getText().isEmpty() || txtAuthor.getText().isBlank()) ||
+                (txtPublisher.getText().isEmpty() || txtPublisher.getText().isBlank()) ||
+                (txtYear.getText().isEmpty() || txtYear.getText().isBlank()) ||
+                txtCopies.getText().isEmpty() || txtCopies.getText().isBlank()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Complete todos los campos.");
+                    "Campos obligatorios vacíos");
             return;
         }
 
-        if (!validations.validateInteger(txtYear.getText())
-                || !validations.validateInteger(txtCopies.getText())) {
+        if (Validations.getInstancevalidations().validateYear(txtYear.getText()) &&
+                (Validations.getInstancevalidations().validatePositiveNumber(Integer.parseInt(txtYear.getText())))) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT, "El formato del año no es correcto.");
+            return;
+        }
+
+        if (Validations.getInstancevalidations().validateIsbn(txtIsbn.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Año y copias deben ser números.");
+                    "Formato incorrecto del ISBN.");
+            return;
+        }
+
+        if (Validations.getInstancevalidations().validateInteger(txtIsbn.getText()) &&
+                (Validations.getInstancevalidations().validateInteger(txtCopies.getText())) &&
+                (Validations.getInstancevalidations().validateInteger(txtYear.getText()))) {
+            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
+                    "Los campos númericos contienen letras o no son enteros");
             return;
         }
 
         try {
-            int year = Integer.parseInt(txtYear.getText());
-            int copies = Integer.parseInt(txtCopies.getText());
-
-            Book book = new Book();
-            book.setIsbn(txtIsbn.getText().trim());
-            book.setTitle(txtTitle.getText().trim());
-            book.setAuthor(txtAuthor.getText().trim());
-            book.setPublisher(txtPublisher.getText().trim());
-            book.setPublication_year(year);
-            book.setTotal_stock(copies);
-            book.setAvailable_stock(copies);
-            book.setActive(true);
+            Book book = getBook();
 
             bookDao.create(book);
 
-            AlertUtils.instanceAlert().show(AppStatus.BOOK_CREATED,
+            AlertUtils.instanceAlert().show(AppStatus.CREATED,
                     "El libro se registró correctamente.");
 
             loadBooks();
@@ -208,8 +211,24 @@ public class CatalogController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al crear libro: " + e.getMessage());
+                    "Error al intentar crear el libro.");
         }
+    }
+
+    private Book getBook() {
+        int year = Integer.parseInt(txtYear.getText());
+        int copies = Integer.parseInt(txtCopies.getText());
+
+        Book book = new Book();
+        book.setIsbn(txtIsbn.getText().trim());
+        book.setTitle(txtTitle.getText().trim());
+        book.setAuthor(txtAuthor.getText().trim());
+        book.setPublisher(txtPublisher.getText().trim());
+        book.setPublication_year(year);
+        book.setTotal_stock(copies);
+        book.setAvailable_stock(copies);
+        book.setActive(true);
+        return book;
     }
 
     @FXML
@@ -220,12 +239,12 @@ public class CatalogController {
             return;
         }
 
-        if (validations.isEmpty(txtIsbn.getText())
-                || validations.isEmpty(txtTitle.getText())
-                || validations.isEmpty(txtAuthor.getText())
-                || validations.isEmpty(txtPublisher.getText())
-                || validations.isEmpty(txtYear.getText())
-                || validations.isEmpty(txtCopies.getText())) {
+        if (txtIsbn.getText().isEmpty()
+                || txtTitle.getText().isEmpty()
+                || txtAuthor.getText().isEmpty()
+                || txtPublisher.getText().isEmpty()
+                || txtYear.getText().isEmpty()
+                || txtCopies.getText().isEmpty()) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Complete todos los campos.");
             return;
@@ -256,7 +275,7 @@ public class CatalogController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al actualizar: " + e.getMessage());
+                    "Error al actualizar el libro seleccionado.");
         }
     }
 
@@ -271,7 +290,7 @@ public class CatalogController {
         try {
             bookDao.delete(selectedBook.getBook_id());
 
-            AlertUtils.instanceAlert().show(AppStatus.BOOK_DELETED,
+            AlertUtils.instanceAlert().show(AppStatus.DELETED,
                     "El libro se eliminó correctamente.");
 
             loadBooks();
@@ -279,7 +298,7 @@ public class CatalogController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al eliminar: " + e.getMessage());
+                    "Error al eliminar el libro seleccionado.");
         }
     }
 
@@ -330,7 +349,7 @@ public class CatalogController {
 
         } catch (SQLException e) {
             AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
-                    "Error al solicitar préstamo: " + e.getMessage());
+                    "Error al solicitar el préstamo. Pruebe nuevamente.");
         }
     }
 

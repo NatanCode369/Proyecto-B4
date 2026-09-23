@@ -8,10 +8,8 @@ import java.util.stream.Collectors;
 
 public enum AppStatus {
     OK(200, Severity.INFO, "Operación completada", "La operación se realizó con éxito."),
-    BOOK_CREATED(201, Severity.INFO, "Libro creado", "Libro creado exitosamente."),
-    BOOK_DELETED(204, Severity.INFO, "Libro eliminado", "Libro eliminado exitosamente."),
-    USER_CREATED(201, Severity.INFO, "Usuario creado", "El usuario se creó correctamente."),
-    USER_DELETED(204, Severity.INFO, "Usuario eliminado", "El usuario se eliminó correctamente."),
+    CREATED(201, Severity.INFO, "Creado", "Creación exitosa."),
+    DELETED(204, Severity.INFO, "Creado", "Eliminación exitosa."),
 
     INVALID_INPUT(400, Severity.WARNING, "Datos inválidos", "Revise los campos obligatorios."),
     UNAUTHORIZED(401, Severity.ERROR, "Sesión no válida", "Debe iniciar sesión."),
@@ -20,7 +18,7 @@ public enum AppStatus {
     CONFLICT(409, Severity.WARNING, "Conflicto de datos", "El registro ya existe o no puede modificarse."),
     UNPROCESSABLE(422, Severity.WARNING, "Regla de negocio", "La operación no cumple las reglas del sistema."),
 
-    DATABASE_UNAVAILABLE(503, Severity.ERROR, "Base de datos no disponible",
+    DATABASE_UNAVAILABLE(503, Severity.ERROR, "Conflictos en la base de datos",
             "No fue posible conectarse con la base de datos."),
     UNEXPECTED_ERROR(500, Severity.ERROR, "Error inesperado",
             "Ocurrió un error interno. Intente nuevamente.");
