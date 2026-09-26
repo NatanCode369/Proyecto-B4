@@ -7,7 +7,6 @@ import javafx.scene.control.TextField;
 import org.library.system.dao.UserDao;
 import org.library.system.enums.Role;
 import org.library.system.model.User;
-import org.library.system.service.EmailRoleResolver;
 import org.library.system.utils.AlertUtils;
 import org.library.system.utils.AppStatus;
 import org.library.system.utils.PasswordUtil;
@@ -35,7 +34,6 @@ public class RegisterController {
 
     @FXML
     private void handleRegister() {
-        // Validar campos obligatorios vacios
         if (txtName.getText().isEmpty()
                 || txtEmail.getText().isEmpty()
                 || txtPassword.getText().isEmpty()
@@ -45,14 +43,12 @@ public class RegisterController {
             return;
         }
 
-        // Validar que las contraseñas coincidan
         if (!validations.validatePasswordMatch(txtPassword.getText(), txtConfirmPassword.getText())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Las contraseñas no coinciden, asegúrese de que ambas contraseñas coinciden.");
             return;
         }
 
-        // Validar fortaleza de la contraseña
         if (!validations.validatePasswordStrength(txtConfirmPassword.getText(), 8)) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     """
@@ -65,20 +61,19 @@ public class RegisterController {
             return;
         }
 
-        // Validar formato de email
         if (!validations.validateEmail(txtEmail.getText().trim())) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
                     "Formato no válido para el email.");
             return;
         }
 
-        // Detectar rol por prefijo del correo
         String email = txtEmail.getText().trim().toLowerCase();
-        Role role = EmailRoleResolver.resolve(email);
 
-        if (role == null) {
+        // Solo se permiten correos con prefijo std. (estudiantes)
+        if (!email.startsWith("std.")) {
             AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Correo inválido. Prefijos permitidos: std. | blt. | btj.");
+                    "Solo se pueden registrar estudiantes.\n" +
+                            "El correo debe iniciar con 'std.'");
             return;
         }
 
@@ -107,21 +102,21 @@ public class RegisterController {
             user.setLast_name(lastName);
             user.setEmail(email);
             user.setPassword_hash(PasswordUtil.hash(txtPassword.getText()));
-            user.setUser_role(role);
+            user.setUser_role(Role.STUDENT);  // ← forzado a STUDENT
             user.setActive(true);
 
             userDao.create(user);
 
             AlertUtils.instanceAlert().show(AppStatus.CREATED,
-                    "Usuario registrado correctamente. Redirigiendo al login...");
+                    "Estudiante registrado correctamente. Redirigiendo al login...");
 
             SceneManager.getInstanciaSceneManager().goTo(
                     "/org/library/system/view/LoginView.fxml"
             );
 
         } catch (SQLException e) {
-            AlertUtils.instanceAlert().show(AppStatus.INVALID_INPUT,
-                    "Revise los campos obligatorios y revise de nuevo.");
+            AlertUtils.instanceAlert().show(AppStatus.DATABASE_UNAVAILABLE,
+                    "Error al registrar: " + e.getMessage());
         }
     }
 

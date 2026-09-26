@@ -29,11 +29,11 @@ public class AlertUtils {
             alert.setTitle(String.valueOf(status.getCode()));
             alert.setHeaderText(status.getTitle());
             alert.setContentText(
-                    detail == null || detail.isBlank()?
-                            status.getDescriptionMessage(): detail
+                    detail == null || detail.isBlank() ?
+                            status.getDescriptionMessage() : detail
             );
+            alert.showAndWait();  // ← MOVIDO AQUÍ (antes estaba afuera del Runnable)
         };
-        alert.show();
 
         // Verifica si el hilo actual es el hilo de JavaFX
         if (Platform.isFxApplicationThread()) {
